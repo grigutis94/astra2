@@ -1,8 +1,18 @@
-import { useRef, useEffect, useState } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { useRef, useEffect, useState, useCallback } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, Text } from '@react-three/drei';
 import * as THREE from 'three';
 import type { TankFormData } from '../types/tankTypes';
+
+// Accessory types
+type AccessoryType = 'supportLegs' | 'thermalInsulation' | 'cipSystem' | 'pressureRelief' | 'levelIndicators' | 'hatchesAndDrains';
+
+interface AccessoryPosition {
+  id: string;
+  type: AccessoryType;
+  position: [number, number, number];
+  rotation: [number, number, number];
+}
 
 // Helper function to create tank geometry
 const createCylindricalTank = (radius: number, height: number, topType: string, bottomType: string, material?: string) => {
@@ -268,7 +278,7 @@ const ErrorCube = () => {
   );
 };
 
-// Tank model component
+// Tank model component - this is no longer used, replaced by TankModelWithAccessories
 const TankModel = ({ formData }: { formData: TankFormData }) => {
   const groupRef = useRef<THREE.Group>(null);
   const [hasError, setHasError] = useState(false);
@@ -448,12 +458,510 @@ const TankModel = ({ formData }: { formData: TankFormData }) => {
   return hasError ? <ErrorCube /> : <group ref={groupRef} />;
 };
 
+// Supaprastintas Draggable 3D Accessory komponentas
+const DraggableAccessory = ({ accessory, tankBounds, onPositionChange, onDragStateChange }: {
+  accessory: AccessoryPosition;
+  tankBounds: { width: number; height: number; depth: number };
+  onPositionChange: (id: string, position: [number, number, number]) => void;
+  onDragStateChange: (isDragging: boolean) => void;
+}) => {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [hovered, setHovered] = useState(false);
+
+  // Create 3D geometry for each accessory type
+  const createAccessoryGeometry = (type: AccessoryType) => {
+    switch (type) {
+      case 'supportLegs':
+        return <cylinderGeometry args={[0.05, 0.05, 0.5, 8]} />;
+      case 'thermalInsulation':
+        return <boxGeometry args={[0.3, 0.8, 0.3]} />;
+      case 'cipSystem':
+        return <sphereGeometry args={[0.15, 16, 16]} />;
+      case 'pressureRelief':
+        return <coneGeometry args={[0.1, 0.3, 8]} />;
+      case 'levelIndicators':
+        return <boxGeometry args={[0.1, 0.4, 0.1]} />;
+      case 'hatchesAndDrains':
+        return <cylinderGeometry args={[0.2, 0.2, 0.1, 16]} />;
+      default:
+        return <boxGeometry args={[0.2, 0.2, 0.2]} />;
+    }
+  };
+
+  const getAccessoryColor = (type: AccessoryType, isDragging: boolean, hovered: boolean) => {
+    const baseColors = {
+      supportLegs: 0x64748b,
+      thermalInsulation: 0xfbbf24,
+      cipSystem: 0x3b82f6,
+      pressureRelief: 0xef4444,
+      levelIndicators: 0x10b981,
+      hatchesAndDrains: 0x8b5cf6,
+    };
+    
+    if (isDragging) return 0x00ff00; // Green when dragging
+    if (hovered) return 0xff9500; // Orange when hovered
+    return baseColors[type];
+  };
+
+  // Paprastas mouse handling - dragging tik laikant mygtuką
+  const handleMouseDown = (e: any) => {
+    e.stopPropagation();
+    console.log('Mouse down on accessory:', accessory.id);
+    setIsDragging(true);
+    onDragStateChange(true);
+    document.body.style.cursor = 'grabbing';
+
+    // Išsaugome pradinę pelės poziciją
+    let lastMouseX = 0;
+    let lastMouseY = 0;
+    let isFirstMove = true;
+
+    // Pridėti global mouse event listeners
+    const handleGlobalMouseMove = (moveEvent: MouseEvent) => {
+      if (meshRef.current) {
+        // Pirmo judėjimo metu išsaugome pradinę poziciją
+        if (isFirstMove) {
+          lastMouseX = moveEvent.clientX;
+          lastMouseY = moveEvent.clientY;
+          isFirstMove = false;
+          return;
+        }
+
+        // Apskaičiuojame pelės judėjimo deltą
+        const deltaX = moveEvent.clientX - lastMouseX;
+        const deltaY = moveEvent.clientY - lastMouseY;
+
+        // Dabartinė objekto pozicija
+        const currentPos = meshRef.current.position;
+
+        // Konvertuojame į 3D judėjimą su teisingomis kryptimis
+        const sensitivity = 0.01;
+        const newPosition: [number, number, number] = [
+          currentPos.x + deltaX * sensitivity,      // X ašis - šonai (teisingai)
+          currentPos.y - deltaY * sensitivity,      // Y ašis - aukštis (atvirkščiai nes screen Y atvirkščias)
+          currentPos.z                              // Z ašis - išlaikome nepakitusią
+        ];
+
+        // Apribojame poziciją prie tanko ribų
+        const constrainedPosition: [number, number, number] = [
+          Math.max(-tankBounds.width/2, Math.min(tankBounds.width/2, newPosition[0])),
+          Math.max(0, Math.min(tankBounds.height, newPosition[1])),
+          Math.max(-tankBounds.depth/2, Math.min(tankBounds.depth/2, newPosition[2]))
+        ];
+
+        meshRef.current.position.set(...constrainedPosition);
+        onPositionChange(accessory.id, constrainedPosition);
+
+        // Atnaujinti paskutinę pelės poziciją kitam judėjimui
+        lastMouseX = moveEvent.clientX;
+        lastMouseY = moveEvent.clientY;
+      }
+    };
+
+    const handleGlobalMouseUp = () => {
+      console.log('Mouse up on accessory:', accessory.id);
+      setIsDragging(false);
+      onDragStateChange(false);
+      document.body.style.cursor = 'auto';
+
+      // Pašalinti global event listeners
+      document.removeEventListener('mousemove', handleGlobalMouseMove);
+      document.removeEventListener('mouseup', handleGlobalMouseUp);
+    };
+
+    // Pridėti global event listeners
+    document.addEventListener('mousemove', handleGlobalMouseMove);
+    document.addEventListener('mouseup', handleGlobalMouseUp);
+  };
+
+  return (
+    <mesh
+      ref={meshRef}
+      position={accessory.position}
+      rotation={accessory.rotation}
+      onPointerDown={handleMouseDown}
+      // Pašalinu onPointerMove - dragging bus tik per global mouse events
+      onPointerOver={() => {
+        setHovered(true);
+        if (!isDragging) {
+          document.body.style.cursor = 'grab';
+        }
+      }}
+      onPointerOut={() => {
+        setHovered(false);
+        if (!isDragging) {
+          document.body.style.cursor = 'auto';
+        }
+      }}
+      castShadow
+      receiveShadow
+    >
+      {createAccessoryGeometry(accessory.type)}
+      <meshStandardMaterial 
+        color={getAccessoryColor(accessory.type, isDragging, hovered)}
+        metalness={0.7}
+        roughness={0.3}
+        transparent={isDragging}
+        opacity={isDragging ? 0.7 : 1}
+      />
+      
+      {/* Accessory label */}
+      <Text
+        position={[0, 0.5, 0]}
+        fontSize={0.1}
+        color="white"
+        anchorX="center"
+        anchorY="middle"
+      >
+        {accessory.type}
+      </Text>
+    </mesh>
+  );
+};
+
+// Accessory Palette - shows available accessories to drag onto tank
+const AccessoryPalette = ({ onAccessoryDrop }: {
+  onAccessoryDrop: (type: AccessoryType, position: [number, number, number]) => void;
+}) => {
+  const accessories: AccessoryType[] = [
+    'supportLegs', 'thermalInsulation', 'cipSystem', 
+    'pressureRelief', 'levelIndicators', 'hatchesAndDrains'
+  ];
+
+  return (
+    <div className="absolute bottom-4 left-4 z-20 bg-white/90 dark:bg-gray-800/90 rounded-xl p-4 shadow-lg border border-gray-200 dark:border-gray-600">
+      <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Accessories Palette</h3>
+      <div className="grid grid-cols-2 gap-2">
+        {accessories.map((type) => (
+          <div
+            key={type}
+            className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 cursor-grab hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-300 transition-all"
+            draggable
+            onDragStart={(e) => {
+              e.dataTransfer.setData('accessoryType', type);
+            }}
+            title={type}
+          >
+            {type.slice(0, 3)}
+          </div>
+        ))}
+      </div>
+      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+        Drag to add to tank
+      </p>
+    </div>
+  );
+};
+
+// Enhanced Tank Model with Accessories
+const TankModelWithAccessories = ({ formData, accessories, onAccessoryPositionChange, onDragStateChange }: {
+  formData: TankFormData;
+  accessories: AccessoryPosition[];
+  onAccessoryPositionChange: (id: string, position: [number, number, number]) => void;
+  onDragStateChange: (isDragging: boolean) => void;
+}) => {
+  const groupRef = useRef<THREE.Group>(null);
+  const [hasError, setHasError] = useState(false);
+  const [tankBounds, setTankBounds] = useState({ width: 2, height: 2, depth: 2 });
+
+  // Function to control dragging state globally - now uses the callback from parent
+  const setGlobalDragging = (dragging: boolean) => {
+    onDragStateChange(dragging);
+  };
+
+  // Calculate tank bounds for accessory constraints
+  useEffect(() => {
+    if (formData) {
+      const heightInMm = formData.height || 1000;
+      const height = heightInMm / 1000;
+      
+      if (formData.tankType === 'cylindrical') {
+        const diameterInMm = formData.diameter || 500;
+        const diameter = diameterInMm / 1000;
+        setTankBounds({ width: diameter, height, depth: diameter });
+      } else {
+        const widthInMm = formData.width || 500;
+        const width = widthInMm / 1000;
+        setTankBounds({ width, height, depth: width });
+      }
+    }
+  }, [formData]);
+
+  // Position the entire group above the grid floor
+  useEffect(() => {
+    if (groupRef.current && formData) {
+      const heightInMm = formData.height || 1000;
+      const height = heightInMm / 1000;
+      const floorY = Math.min(-8, -(height / 2) - 2);
+      
+      // Calculate leg height based on tank dimensions and orientation
+      let legHeight;
+      let effectiveHeight = height; // Height for positioning calculation
+      
+      if (formData.tankType === 'cylindrical') {
+        const diameterInMm = formData.diameter || 500;
+        const radius = (diameterInMm / 2) / 1000;
+        const bottomType = formData.bottomType || 'flat';
+        
+        // Calculate leg height based on bottom type
+        if (bottomType === 'cone') {
+          legHeight = radius * 1.2; // Taller legs for cone clearance
+        } else if (bottomType === 'dome') {
+          legHeight = radius * 1.2; // Same tall legs for dome clearance
+        } else {
+          legHeight = radius * 0.6; // Standard legs for flat bottom
+        }
+        
+        // For horizontal orientation, effective height is the diameter
+        if (formData.orientation === 'horizontal') {
+          effectiveHeight = radius * 2; // diameter
+        }
+      } else {
+        const widthInMm = formData.width || 500;
+        const width = widthInMm / 1000;
+        legHeight = width * 0.6;
+        
+        // For horizontal orientation, effective height is the width
+        if (formData.orientation === 'horizontal') {
+          effectiveHeight = width;
+        }
+      }
+      
+      // Position tank so the legs touch the floor
+      // Tank center should be at floor level + half effective height + leg height
+      groupRef.current.position.y = floorY + effectiveHeight / 2 + legHeight;
+    }
+  }, [formData]);
+  
+  useEffect(() => {
+    if (!groupRef.current) return;
+    
+    try {
+      // Clear existing children
+      while(groupRef.current.children.length > 0) {
+        const object = groupRef.current.children[0];
+        groupRef.current.remove(object);
+      }
+      
+      // Default tank if no form data
+      if (!formData || !formData.tankType) {
+        const { group, addLegs } = createCylindricalTank(2, 5, 'flat', 'flat', formData?.material);
+        addLegs(4);
+        groupRef.current.add(group);
+        
+        // Position default tank properly on floor
+        const defaultHeight = 5;
+        const defaultRadius = 2;
+        const defaultLegHeight = defaultRadius * 0.6;
+        const floorY = Math.min(-8, -(defaultHeight / 2) - 2);
+        groupRef.current.position.y = floorY + defaultHeight / 2 + defaultLegHeight;
+        return;
+      }
+      
+      // Calculate dimensions based on form inputs
+      const heightInMm = formData.height || 1000;
+      
+      if (formData.tankType === 'cylindrical') {
+        const diameterInMm = formData.diameter || 500;
+        
+        // Convert from mm to 3D units with better scaling for large tanks
+        // Use 1000 as divisor to handle larger tanks properly
+        const radius = (diameterInMm / 2) / 1000;
+        const height = heightInMm / 1000;
+        
+        // Get top/bottom configuration from form data
+        const topType = formData.topType || 'flat';
+        const bottomType = formData.bottomType || 'flat';
+        
+        // Create the tank
+        const tankObj = createCylindricalTank(radius, height, topType, bottomType, formData.material);
+        
+        // Add legs - ensure we convert string to number
+        const numLegs = Number(formData.legs) || 4;
+        const isHorizontal = formData.orientation === 'horizontal';
+        tankObj.addLegs(numLegs, isHorizontal);
+        
+        // Rotate tank if horizontal - only rotate the tank parts, legs are already positioned correctly
+        if (formData.orientation === 'horizontal') {
+          tankObj.group.children.forEach(child => {
+            if (child instanceof THREE.Mesh && 
+                child.material instanceof THREE.MeshStandardMaterial && 
+                child.material.color.getHex() !== 0x64748b) {
+              // This is a tank part (not a leg) - rotate it
+              child.rotation.z = Math.PI / 2;
+            }
+          });
+        }
+        
+        groupRef.current.add(tankObj.group);
+      } else if (formData.tankType === 'rectangular') {
+        const widthInMm = formData.width || 500;
+        
+        // Convert from mm to 3D units with better scaling for large tanks
+        // Use 1000 as divisor to handle larger tanks properly
+        const width = widthInMm / 1000;
+        const height = heightInMm / 1000;
+        const depth = widthInMm / 1000; // Use width for depth to make it square
+        
+        // Create appropriate tank based on orientation
+        const tankObj = createRectangularTank(width, height, depth, formData.material);
+        
+        // Add legs - ensure we convert string to number
+        const numLegs = Number(formData.legs) || 4;
+        const isHorizontal = formData.orientation === 'horizontal';
+        tankObj.addLegs(numLegs, isHorizontal);
+        
+        // For horizontal orientation, rotate only the tank parts, legs are already positioned correctly
+        if (formData.orientation === 'horizontal') {
+          tankObj.group.children.forEach(child => {
+            if (child instanceof THREE.Mesh && 
+                child.material instanceof THREE.MeshStandardMaterial && 
+                child.material.color.getHex() !== 0x64748b) {
+              // This is a tank part (not a leg) - rotate it
+              child.rotation.z = Math.PI / 2;
+            }
+          });
+        }
+        
+        groupRef.current.add(tankObj.group);
+      }
+      
+      setHasError(false);
+    } catch (error) {
+      console.error("Error creating tank model:", error);
+      setHasError(true);
+    }
+  }, [formData]);
+  
+  // This animation is now handled in the combined useFrame below
+  
+  // Add hover effect and selection highlight
+  useFrame(({ clock, mouse, viewport }) => {
+    if (groupRef.current && !hasError) {
+      // Gentle idle animation
+      groupRef.current.rotation.y = Math.sin(clock.getElapsedTime() * 0.2) * 0.2;
+      
+      // Subtle mouse follow - tank slightly rotates to follow mouse position
+      const mouseX = (mouse.x * viewport.width) / 20;
+      const mouseY = (mouse.y * viewport.height) / 20;
+      
+      groupRef.current.rotation.x = THREE.MathUtils.lerp(
+        groupRef.current.rotation.x || 0,
+        mouseY * 0.02,
+        0.05
+      );
+      
+      groupRef.current.rotation.y = THREE.MathUtils.lerp(
+        groupRef.current.rotation.y || 0,
+        Math.sin(clock.getElapsedTime() * 0.2) * 0.2 + mouseX * 0.02,
+        0.05
+      );
+    }
+  });
+  
+  return hasError ? <ErrorCube /> : (
+    <group ref={groupRef}>
+      {/* Render accessories */}
+      {accessories.map((accessory) => (
+        <DraggableAccessory
+          key={accessory.id}
+          accessory={accessory}
+          tankBounds={tankBounds}
+          onPositionChange={onAccessoryPositionChange}
+          onDragStateChange={setGlobalDragging}
+        />
+      ))}
+    </group>
+  );
+};
+
 // The main 3D tank preview component
 interface TankPreviewProps {
   formData: TankFormData;
 }
 
 const Tank3DPreview = ({ formData }: TankPreviewProps) => {
+  const [accessories, setAccessories] = useState<AccessoryPosition[]>([]);
+  const [isDraggingAccessory, setIsDraggingAccessory] = useState(false);
+  const orbitControlsRef = useRef<any>(null);
+
+  // Handle global dragging state from accessories
+  const handleGlobalDragStateChange = (isDragging: boolean) => {
+    setIsDraggingAccessory(isDragging);
+    // Disable OrbitControls when dragging accessories
+    if (orbitControlsRef.current) {
+      orbitControlsRef.current.enabled = !isDragging;
+    }
+  };
+
+  // Convert selected accessories from form to 3D accessories
+  useEffect(() => {
+    if (formData.accessories) {
+      const newAccessories: AccessoryPosition[] = [];
+      let accessoryIndex = 0;
+
+      Object.entries(formData.accessories).forEach(([type, isSelected]) => {
+        if (isSelected) {
+          // Calculate default position based on tank dimensions and accessory type
+          const heightInMm = formData.height || 1000;
+          const height = heightInMm / 1000;
+          
+          let defaultPosition: [number, number, number] = [0, height / 2, 0];
+          
+          // Position accessories based on their type
+          switch (type as AccessoryType) {
+            case 'supportLegs':
+              defaultPosition = [0, -height / 4, 0];
+              break;
+            case 'thermalInsulation':
+              defaultPosition = [0, height / 4, 0];
+              break;
+            case 'cipSystem':
+              defaultPosition = [0, height * 0.8, 0];
+              break;
+            case 'pressureRelief':
+              defaultPosition = [0, height * 0.9, 0];
+              break;
+            case 'levelIndicators':
+              defaultPosition = [0, height * 0.6, 0];
+              break;
+            case 'hatchesAndDrains':
+              defaultPosition = [0, height * 0.1, 0];
+              break;
+          }
+
+          newAccessories.push({
+            id: `${type}-${accessoryIndex++}`,
+            type: type as AccessoryType,
+            position: defaultPosition,
+            rotation: [0, 0, 0],
+          });
+        }
+      });
+
+      setAccessories(newAccessories);
+    }
+  }, [formData.accessories, formData.height, formData.tankType]);
+
+  const handleAccessoryPositionChange = (id: string, position: [number, number, number]) => {
+    setAccessories(prev => 
+      prev.map(acc => 
+        acc.id === id ? { ...acc, position } : acc
+      )
+    );
+  };
+
+  const handleAccessoryDrop = (type: AccessoryType, position: [number, number, number]) => {
+    const newAccessory: AccessoryPosition = {
+      id: `${type}-${Date.now()}`,
+      type,
+      position,
+      rotation: [0, 0, 0],
+    };
+    setAccessories(prev => [...prev, newAccessory]);
+  };
+
   // Calculate camera position based on tank size
   const getTankDimensions = () => {
     if (!formData) return { maxDimension: 5, height: 5, tankCenterY: 0 };
@@ -498,7 +1006,36 @@ const Tank3DPreview = ({ formData }: TankPreviewProps) => {
   const floorY = Math.min(-8, -(height / 2) - 2);
   
   return (
-    <div className="h-[450px] w-full rounded-3xl overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg relative">
+    <div className="h-[450px] w-full rounded-3xl overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg relative"
+         onDrop={(e) => {
+           e.preventDefault();
+           const accessoryType = e.dataTransfer.getData('accessoryType') as AccessoryType;
+           if (accessoryType) {
+             // Convert drop position to 3D coordinates (simplified)
+             const rect = e.currentTarget.getBoundingClientRect();
+             const x = ((e.clientX - rect.left) / rect.width - 0.5) * 4;
+             const y = ((rect.bottom - e.clientY) / rect.height) * 4;
+             handleAccessoryDrop(accessoryType, [x, y, 0]);
+           }
+         }}
+         onDragOver={(e) => e.preventDefault()}
+    >
+      {/* Accessory Palette */}
+      <AccessoryPalette onAccessoryDrop={handleAccessoryDrop} />
+
+      {/* Interactive 3D Controls */}
+      <div className="absolute top-4 left-4 z-20 bg-white/90 dark:bg-gray-800/90 rounded-xl p-3 shadow-lg border border-gray-200 dark:border-gray-600">
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+          <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
+            3D Edit Mode
+          </span>
+        </div>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          Drag accessories to position
+        </p>
+      </div>
+
       {/* Dark theme status indicator */}
       <div className="absolute top-4 right-4 z-10 flex items-center px-3 py-2 bg-slate-800/80 backdrop-blur-md rounded-xl shadow-md border border-slate-600">
         <div className="h-2 w-2 rounded-full bg-astra-soft animate-pulse mr-2"></div>
@@ -509,8 +1046,10 @@ const Tank3DPreview = ({ formData }: TankPreviewProps) => {
         <color attach="background" args={['#f8fafc']} />
         <PerspectiveCamera makeDefault position={cameraPosition} fov={35} />
         <OrbitControls 
+          ref={orbitControlsRef}
           enableZoom={true} 
           enablePan={true} 
+          enabled={!isDraggingAccessory}
           minDistance={Math.max(maxDimension * 0.8, 3)} 
           maxDistance={Math.max(maxDimension * 8, 60)} 
           target={cameraTarget}
@@ -585,7 +1124,12 @@ const Tank3DPreview = ({ formData }: TankPreviewProps) => {
           </mesh>
         </group>
         
-        <TankModel formData={formData} />
+        <TankModelWithAccessories 
+          formData={formData} 
+          accessories={accessories}
+          onAccessoryPositionChange={handleAccessoryPositionChange}
+          onDragStateChange={handleGlobalDragStateChange}
+        />
       </Canvas>
     </div>
   );
