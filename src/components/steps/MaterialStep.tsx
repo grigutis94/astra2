@@ -91,10 +91,10 @@ const MaterialStep = () => {
     }
   };
 
-  // Auto-set recommended surfaces based on purpose and material
+  // Auto-set recommended surfaces based on purpose and material (only set defaults if not already selected)
   useEffect(() => {
     if (purpose && material) {
-      // Set inner surface based on purpose
+      // Only set inner surface if it's not already selected
       if (purpose === 'food' && !innerSurface) {
         setValue('innerSurface', 'polished');
       } else if (purpose === 'chemical' && !innerSurface) {
@@ -103,12 +103,12 @@ const MaterialStep = () => {
         setValue('innerSurface', 'standard');
       }
 
-      // Set outer surface based on application
+      // Only set outer surface if it's not already selected
       if (!outerSurface) {
         setValue('outerSurface', 'painted'); // Default to painted for protection
       }
     }
-  }, [purpose, material, innerSurface, outerSurface, setValue]);
+  }, [purpose, material, setValue]); // Removed innerSurface and outerSurface from dependencies
 
   const getRecommendationLevel = (materialKey: string) => {
     const materialInfo = materialOptions[materialKey as keyof typeof materialOptions];
@@ -172,17 +172,19 @@ const MaterialStep = () => {
                     </div>
                   )}
                   
-                  {/* Selection indicator */}
-                  {material === key && (
-                    <div className="absolute top-3 left-3 w-6 h-6 bg-astra rounded-full flex items-center justify-center">
-                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                  )}
+                  {/* Radio button indicator */}
+                  <div className={`absolute top-3 left-3 w-6 h-6 border-2 rounded-full flex items-center justify-center transition-all duration-200 ${
+                    material === key 
+                      ? 'border-blue-500 bg-blue-500 shadow-lg' 
+                      : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700'
+                  }`}>
+                    {material === key && (
+                      <div className="w-3 h-3 bg-white rounded-full"></div>
+                    )}
+                  </div>
                   
                   {/* Material visualization */}
-                  <div className={`w-full h-3 bg-gradient-to-r ${option.color} rounded-lg mb-4`}></div>
+                  <div className={`w-full h-3 bg-gradient-to-r ${option.color} rounded-lg mb-4 mt-6`}></div>
                   
                   <div className="space-y-3">
                     <div>
@@ -246,10 +248,10 @@ const MaterialStep = () => {
                 />
                 <div className="flex items-start gap-3">
                   <div className={`w-5 h-5 mt-0.5 border-2 rounded-full flex items-center justify-center ${
-                    innerSurface === key ? 'border-astra' : 'border-gray-300 dark:border-gray-600'
+                    innerSurface === key ? 'border-blue-500 bg-blue-500' : 'border-gray-300 dark:border-gray-600'
                   }`}>
                     {innerSurface === key && (
-                      <div className="w-2.5 h-2.5 bg-astra rounded-full"></div>
+                      <div className="w-2.5 h-2.5 bg-white rounded-full"></div>
                     )}
                   </div>
                   <div className="flex-1">
@@ -298,10 +300,10 @@ const MaterialStep = () => {
                 />
                 <div className="flex items-start gap-3">
                   <div className={`w-5 h-5 mt-0.5 border-2 rounded-full flex items-center justify-center ${
-                    outerSurface === key ? 'border-astra' : 'border-gray-300 dark:border-gray-600'
+                    outerSurface === key ? 'border-blue-500 bg-blue-500' : 'border-gray-300 dark:border-gray-600'
                   }`}>
                     {outerSurface === key && (
-                      <div className="w-2.5 h-2.5 bg-astra rounded-full"></div>
+                      <div className="w-2.5 h-2.5 bg-white rounded-full"></div>
                     )}
                   </div>
                   <div className="flex-1">

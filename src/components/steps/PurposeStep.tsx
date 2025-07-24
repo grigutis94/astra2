@@ -1,5 +1,6 @@
 import { useFormContext } from 'react-hook-form';
 import { useEffect } from 'react';
+import { useTheme } from '../../contexts/ThemeContext';
 import type { TankFormData } from '../../types/tankTypes';
 
 type PurposeKey = 'water' | 'food' | 'chemical';
@@ -62,6 +63,7 @@ const purposeRequirements: Record<PurposeKey, PurposeRequirement> = {
 
 const PurposeStep = () => {
   const { register, setValue, watch, formState: { errors } } = useFormContext<TankFormData>();
+  const { theme } = useTheme();
   const purpose = watch('purpose');
 
   // Auto-adjust parameters when purpose changes
@@ -110,7 +112,7 @@ const PurposeStep = () => {
               className="sr-only"
             />
             
-            <div className={`relative p-8 rounded-2xl border-2 transition-all duration-300 ${
+            <div className={`relative p-8 rounded-2xl border-2 transition-all duration-300 h-full flex flex-col justify-between ${
               purpose === key
                 ? 'border-astra bg-astra/5 dark:bg-astra/10'
                 : 'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 group-hover:border-astra/50'
@@ -137,14 +139,7 @@ const PurposeStep = () => {
               
               {/* Technical specs preview */}
               <div className="space-y-3 pt-4 border-t border-gray-200 dark:border-gray-600">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">Min. Wall Thickness:</span>
-                  <span className="font-semibold text-astra">{requirement.minThickness} mm</span>
-                </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">Recommended Material:</span>
-                  <span className="font-semibold text-astra">AISI {requirement.defaultMaterial}</span>
-                </div>
+                {/* Removed Min. Wall Thickness and Recommended Material */}
               </div>
             </div>
           </label>
@@ -160,7 +155,7 @@ const PurposeStep = () => {
 
       {/* Dynamic requirements and notes */}
       {purpose && (
-        <div className="mt-12 p-8 bg-gradient-to-r from-astra/5 to-astra-soft/5 dark:from-astra/10 dark:to-astra-soft/10 rounded-2xl border border-astra/20">
+        <div className={`mt-12 p-8 bg-white dark:bg-gray-800 rounded-2xl border border-astra/20`}>
           <div className="flex items-center gap-3 mb-6">
             <div className="text-2xl">{purposeRequirements[purpose].emoji}</div>
             <div>
@@ -172,41 +167,21 @@ const PurposeStep = () => {
               </p>
             </div>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Technical Requirements */}
-            <div>
-              <h4 className="font-semibold text-astra mb-4 flex items-center gap-2">
-                <div className="w-2 h-2 bg-astra rounded-full"></div>
-                Technical Specifications
-              </h4>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center py-2 px-4 bg-white/50 dark:bg-gray-800/50 rounded-lg">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Minimum Wall Thickness:</span>
-                  <span className="font-semibold text-gray-900 dark:text-white">{purposeRequirements[purpose].minThickness} mm</span>
-                </div>
-                <div className="flex justify-between items-center py-2 px-4 bg-white/50 dark:bg-gray-800/50 rounded-lg">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Recommended Material:</span>
-                  <span className="font-semibold text-gray-900 dark:text-white">AISI {purposeRequirements[purpose].defaultMaterial}</span>
-                </div>
-              </div>
-            </div>
 
-            {/* Important Notes */}
-            <div>
-              <h4 className="font-semibold text-astra mb-4 flex items-center gap-2">
-                <div className="w-2 h-2 bg-astra rounded-full"></div>
-                Important Considerations
-              </h4>
-              <ul className="space-y-2">
-                {purposeRequirements[purpose].notes.map((note, index) => (
-                  <li key={index} className="flex items-start gap-3 text-sm text-gray-700 dark:text-gray-300">
-                    <div className="w-1.5 h-1.5 bg-astra-soft rounded-full mt-2 flex-shrink-0"></div>
-                    <span>{note}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+          {/* Detailed recommendations */}
+          <div className="space-y-4">
+            {purposeRequirements[purpose].notes.map((note, index) => (
+              <p key={index} className="text-sm text-gray-600 dark:text-gray-400">
+                - {note}
+              </p>
+            ))}
+            <p className="text-sm font-semibold text-gray-900 dark:text-white">
+              {purposeRequirements[purpose].helperText}
+            </p>
+            {/* Recommended Material */}
+            <p className="text-sm font-semibold text-gray-900 dark:text-white">
+              Recommended Material: {purposeRequirements[purpose].defaultMaterial}
+            </p>
           </div>
         </div>
       )}

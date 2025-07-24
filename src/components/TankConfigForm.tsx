@@ -99,16 +99,16 @@ const TankConfigForm = () => {
 
   return (
     <FormProvider {...methods}>
-      <div className="min-h-screen bg-slate-900 text-white">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white">
         {/* Modern Header */}
-        <div className="border-b border-slate-700 bg-slate-800/50 backdrop-blur-sm">
+        <div className="border-b border-gray-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm">
           <div className="max-w-7xl mx-auto px-6 py-8">
             <div className="flex justify-between items-center">
               <div>
                 <h1 className="text-4xl font-bold bg-gradient-to-r from-astra to-astra-soft bg-clip-text text-transparent mb-3">
                   Tank Configurator
                 </h1>
-                <p className="text-slate-400 text-lg">Professional tank design made simple</p>
+                <p className="text-gray-600 dark:text-slate-400 text-lg">Professional tank design made simple</p>
               </div>
               <ThemeToggle />
             </div>
@@ -184,14 +184,14 @@ const TankConfigForm = () => {
               {/* Quick Stats */}
               <div className="mt-6 grid grid-cols-2 gap-4">
                 <div className="bg-white dark:bg-gray-800 rounded-xl p-4 text-center border border-gray-200 dark:border-gray-600">
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Volume</p>
-                  <p className="text-2xl font-bold text-astra">
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">Volume</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
                     {formValues.volume ? formValues.volume.toFixed(2) : '0.00'} m³
                   </p>
                 </div>
                 <div className="bg-white dark:bg-gray-800 rounded-xl p-4 text-center border border-gray-200 dark:border-gray-600">
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Material</p>
-                  <p className="text-lg font-bold text-astra">
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">Material</p>
+                  <p className="text-lg font-bold text-gray-900 dark:text-white">
                     {formValues.material ? `AISI ${formValues.material}` : 'Not selected'}
                   </p>
                 </div>
