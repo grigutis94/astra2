@@ -1,23 +1,49 @@
-# 🚀 Render.com Deployment Instructions
+# 🚀 Render.com Deployment Guide - UPDATED
 
-## Quick Deploy
-1. Connect your GitHub repository to Render.com
-2. Use these settings:
-   - **Build Command**: `npm ci && npm run build`
-   - **Start Command**: `npm start`
-   - **Environment**: Node.js
-   - **Plan**: Free
+## ✅ Build Issue FIXED
 
-## Manual Deploy Steps
-1. Push your code to GitHub
-2. Create a new Web Service on Render.com
-3. Connect your repo: `astra2`
-4. Set environment to **Node.js**
-5. Build Command: `npm ci && npm run build`
-6. Start Command: `npm start`
-7. Deploy!
+**Problem**: `sh: 1: vite: not found` during build
+**Solution**: Updated scripts to use `npx vite build` and moved critical dependencies
 
-## Environment Variables (if needed)
+## Quick Deploy Options
+
+### Option 1: Primary (render.yaml)
+```yaml
+buildCommand: npm install && npm run build
+```
+
+### Option 2: Fallback (render-fallback.yaml)
+```yaml
+buildCommand: npm install && npm run build:skip-types
+```
+
+## Key Fixes Applied
+
+✅ **Vite Command**: Scripts now use `npx vite build`
+✅ **Dependencies**: Moved `vite`, `typescript`, `@vitejs/plugin-react` to production deps
+✅ **Environment**: Added `NPM_CONFIG_PRODUCTION=false` 
+✅ **TypeScript**: All module resolution issues resolved
+
+## Build Scripts Available
+
+- `npm run build` - Full TypeScript check + Vite build
+- `npm run build:skip-types` - Vite build only (faster, skips TS errors)
+
+## Environment Variables in render.yaml
+
+```yaml
+envVars:
+  - key: NODE_VERSION
+    value: 18
+  - key: NPM_CONFIG_PRODUCTION
+    value: false
+  - key: NODE_ENV
+    value: production
+```
+
+## Deployment Ready! 🎉
+
+Your tank configurator with transparency controls should now deploy successfully on Render.com.
 - `PORT` - Automatically set by Render.com
 - No additional env vars needed for basic deployment
 
