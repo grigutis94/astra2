@@ -62,24 +62,24 @@ const DimensionsStep = () => {
     <div className="space-y-8">
       {/* Header */}
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+        <h2 className="text-2xl font-bold text-neutral-dark mb-3">
           {t('dimensionsStep.title')}
         </h2>
-        <p className="text-lg text-gray-600 dark:text-gray-300">
+        <p className="text-lg text-muted">
           {t('dimensionsStep.subtitle')}
         </p>
       </div>
 
       {/* Tank Type Selection */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-600">
-        <label className="block text-lg font-semibold text-gray-900 dark:text-white mb-4">
+      <div className="card p-6">
+        <label className="block text-lg font-semibold text-neutral-dark mb-4">
           {t('dimensionsStep.shape')}
         </label>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <label className={`cursor-pointer p-4 rounded-xl border-2 transition-all duration-200 ${
             tankType === 'cylindrical'
-              ? 'border-astra bg-astra/5 dark:bg-astra/10'
-              : 'border-gray-300 dark:border-gray-600 hover:border-astra/50'
+              ? 'border-primary-blue bg-primary-blue/5'
+              : 'border-border-primary hover:border-primary-blue/50'
           }`}>
             <input
               type="radio"
@@ -88,20 +88,20 @@ const DimensionsStep = () => {
               className="sr-only"
             />
             <div className="text-center">
-              <div className="w-16 h-16 mx-auto mb-3 bg-astra/20 rounded-full flex items-center justify-center">
-                <svg className="w-8 h-8 text-astra" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-16 h-16 mx-auto mb-3 bg-primary-blue/20 rounded-full flex items-center justify-center">
+                <svg className="w-8 h-8 text-primary-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <circle cx="12" cy="12" r="10" strokeWidth="2"/>
                 </svg>
               </div>
-              <h3 className="font-semibold text-gray-900 dark:text-white">{t('dimensionsStep.cylindrical.title')}</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">{t('dimensionsStep.cylindrical.description')}</p>
+              <h3 className="font-semibold text-neutral-dark">{t('dimensionsStep.cylindrical.title')}</h3>
+              <p className="text-sm text-muted">{t('dimensionsStep.cylindrical.description')}</p>
             </div>
           </label>
           
           <label className={`cursor-pointer p-4 rounded-xl border-2 transition-all duration-200 ${
             tankType === 'rectangular'
-              ? 'border-astra bg-astra/5 dark:bg-astra/10'
-              : 'border-gray-300 dark:border-gray-600 hover:border-astra/50'
+              ? 'border-primary-blue bg-primary-blue/5'
+              : 'border-border-primary hover:border-primary-blue/50'
           }`}>
             <input
               type="radio"
@@ -110,18 +110,18 @@ const DimensionsStep = () => {
               className="sr-only"
             />
             <div className="text-center">
-              <div className="w-16 h-16 mx-auto mb-3 bg-astra/20 rounded-full flex items-center justify-center">
-                <svg className="w-8 h-8 text-astra" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-16 h-16 mx-auto mb-3 bg-primary-blue/20 rounded-full flex items-center justify-center">
+                <svg className="w-8 h-8 text-primary-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <rect x="3" y="3" width="18" height="18" rx="2" ry="2" strokeWidth="2"/>
                 </svg>
               </div>
-              <h3 className="font-semibold text-gray-900 dark:text-white">{t('dimensionsStep.rectangular.title')}</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">{t('dimensionsStep.rectangular.description')}</p>
+              <h3 className="font-semibold text-neutral-dark">{t('dimensionsStep.rectangular.title')}</h3>
+              <p className="text-sm text-muted">{t('dimensionsStep.rectangular.description')}</p>
             </div>
           </label>
         </div>
         {errors.tankType && (
-          <p className="text-red-500 dark:text-red-400 text-sm mt-2">{t('dimensionsStep.validation.selectType')}</p>
+          <p className="text-error text-sm mt-2">{t('dimensionsStep.validation.selectType')}</p>
         )}
       </div>
 
@@ -129,8 +129,8 @@ const DimensionsStep = () => {
       {tankType && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Height */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-600">
-            <label htmlFor="height" className="block text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          <div className="card p-6">
+            <label htmlFor="height" className="block text-lg font-semibold text-neutral-dark mb-4">
               {t('common.height')} (mm)
             </label>
             <input
@@ -144,18 +144,18 @@ const DimensionsStep = () => {
                 min: { value: 100, message: tString('dimensionsStep.validation.heightMin').replace('{{min}}', '100') },
                 max: { value: 20000, message: tString('dimensionsStep.validation.heightMax').replace('{{max}}', '20,000') }
               })}
-              className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-700 border-2 border-slate-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-astra focus:border-astra transition-all duration-200"
+              className="form-input"
               placeholder="e.g. 2000"
             />
             {errors.height && (
-              <p className="text-red-500 dark:text-red-400 text-sm mt-2">{errors.height.message}</p>
+              <p className="text-error text-sm mt-2">{errors.height.message}</p>
             )}
           </div>
 
           {/* Diameter or Width */}
           {tankType === 'cylindrical' ? (
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-600">
-              <label htmlFor="diameter" className="block text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            <div className="card p-6">
+              <label htmlFor="diameter" className="block text-lg font-semibold text-neutral-dark mb-4">
                 {t('common.diameter')} (mm)
               </label>
               <input
@@ -169,16 +169,16 @@ const DimensionsStep = () => {
                   min: { value: 100, message: tString('dimensionsStep.validation.diameterMin').replace('{{min}}', '100') },
                   max: { value: 10000, message: tString('dimensionsStep.validation.diameterMax').replace('{{max}}', '10,000') }
                 })}
-                className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-700 border-2 border-slate-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-astra focus:border-astra transition-all duration-200"
+                className="form-input"
                 placeholder="e.g. 1000"
               />
               {errors.diameter && (
-                <p className="text-red-500 dark:text-red-400 text-sm mt-2">{errors.diameter.message}</p>
+                <p className="text-error text-sm mt-2">{errors.diameter.message}</p>
               )}
             </div>
           ) : (
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-600">
-              <label htmlFor="width" className="block text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            <div className="card p-6">
+              <label htmlFor="width" className="block text-lg font-semibold text-neutral-dark mb-4">
                 {t('common.width')} (mm)
               </label>
               <input
@@ -192,18 +192,18 @@ const DimensionsStep = () => {
                   min: { value: 100, message: tString('dimensionsStep.validation.widthMin').replace('{{min}}', '100') },
                   max: { value: 10000, message: tString('dimensionsStep.validation.widthMax').replace('{{max}}', '10,000') }
                 })}
-                className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-700 border-2 border-slate-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-astra focus:border-astra transition-all duration-200"
+                className="form-input"
                 placeholder="e.g. 1000"
               />
               {errors.width && (
-                <p className="text-red-500 dark:text-red-400 text-sm mt-2">{errors.width.message}</p>
+                <p className="text-error text-sm mt-2">{errors.width.message}</p>
               )}
             </div>
           )}
 
           {/* Wall Thickness */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-600">
-            <label htmlFor="wallThickness" className="block text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          <div className="card p-6">
+            <label htmlFor="wallThickness" className="block text-lg font-semibold text-neutral-dark mb-4">
               {t('dimensionsStep.wallThickness')}
             </label>
             <input
@@ -226,16 +226,16 @@ const DimensionsStep = () => {
                     .replace('{{max}}', String(currentRequirements?.maxThickness || 50))
                 }
               })}
-              className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-700 border-2 border-slate-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-astra focus:border-astra transition-all duration-200"
+              className="form-input"
               placeholder={`Min: ${currentRequirements?.minThickness || 1}mm`}
             />
             {currentRequirements && (
-              <p className="text-xs text-astra mt-2">
+              <p className="text-xs text-primary-blue mt-2">
                 {t('common.recommended')} {purpose}: {currentRequirements.minThickness}-{currentRequirements.maxThickness}mm
               </p>
             )}
             {errors.wallThickness && (
-              <p className="text-red-500 dark:text-red-400 text-sm mt-2">{errors.wallThickness.message}</p>
+              <p className="text-error text-sm mt-2">{errors.wallThickness.message}</p>
             )}
           </div>
         </div>
@@ -243,23 +243,23 @@ const DimensionsStep = () => {
 
       {/* Volume Display */}
       {currentVolume && currentVolume > 0 && (
-        <div className="bg-gradient-to-r from-astra/5 to-astra-soft/5 dark:from-astra/10 dark:to-astra-soft/10 rounded-2xl p-8 border border-astra/20">
+        <div className="bg-gradient-to-r from-primary-blue/5 to-primary-blue/10 rounded-2xl p-8 border border-primary-blue/20">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              <h3 className="text-xl font-bold text-neutral-dark mb-2">
                 {t('dimensionsStep.calculatedVolume')}
               </h3>
-              <p className="text-3xl font-bold text-astra">
+              <p className="text-3xl font-bold text-primary-blue">
                 {currentVolume.toFixed(3)} m³
               </p>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              <p className="text-sm text-muted mt-1">
                 = {(currentVolume * 1000).toFixed(0)} {tString('common.volume').toLowerCase()}
               </p>
             </div>
             <button
               type="button"
               onClick={() => setShowVolumeCalculation(!showVolumeCalculation)}
-              className="text-sm text-astra hover:text-astra-dark transition-colors duration-200 flex items-center gap-2"
+              className="text-sm text-primary-blue hover:text-primary-blue-hover transition-colors duration-200 flex items-center gap-2"
             >
               {showVolumeCalculation ? t('dimensionsStep.hideCalculation') : t('dimensionsStep.showCalculation')}
               <svg className={`w-4 h-4 transition-transform duration-200 ${showVolumeCalculation ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -269,37 +269,37 @@ const DimensionsStep = () => {
           </div>
           
           {showVolumeCalculation && (
-            <div className="mt-6 pt-6 border-t border-astra/20">
-              <h4 className="font-semibold text-gray-900 dark:text-white mb-3">{t('dimensionsStep.volumeCalculation')}</h4>
+            <div className="mt-6 pt-6 border-t border-primary-blue/20">
+              <h4 className="font-semibold text-neutral-dark mb-3">{t('dimensionsStep.volumeCalculation')}</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                 <div className="space-y-2">
-                  <p className="text-gray-600 dark:text-gray-400">
+                  <p className="text-muted">
                     <span className="font-medium">{t('dimensionsStep.formula')}</span>{' '}
                     {tankType === 'cylindrical' 
                       ? 'π × r² × h (' + t('dimensionsStep.innerDimensions') + ')' 
                       : 'w × h × d (' + t('dimensionsStep.innerDimensions') + ')'
                     }
                   </p>
-                  <p className="text-gray-600 dark:text-gray-400">
+                  <p className="text-muted">
                     <span className="font-medium">{t('dimensionsStep.wallThicknessDeduction')}</span> {wallThickness}mm {t('dimensionsStep.onAllSides')}
                   </p>
                 </div>
                 <div className="space-y-2">
                   {tankType === 'cylindrical' ? (
                     <>
-                      <p className="text-gray-600 dark:text-gray-400">
+                      <p className="text-muted">
                         {t('dimensionsStep.innerDiameter')}: {diameter && wallThickness ? (diameter - wallThickness * 2).toFixed(1) : 0}mm
                       </p>
-                      <p className="text-gray-600 dark:text-gray-400">
+                      <p className="text-muted">
                         {t('dimensionsStep.innerHeight')}: {height && wallThickness ? (height - wallThickness * 2).toFixed(1) : 0}mm
                       </p>
                     </>
                   ) : (
                     <>
-                      <p className="text-gray-600 dark:text-gray-400">
+                      <p className="text-muted">
                         {t('dimensionsStep.innerWidth')}: {width && wallThickness ? (width - wallThickness * 2).toFixed(1) : 0}mm
                       </p>
-                      <p className="text-gray-600 dark:text-gray-400">
+                      <p className="text-muted">
                         {t('dimensionsStep.innerHeight')}: {height && wallThickness ? (height - wallThickness * 2).toFixed(1) : 0}mm
                       </p>
                     </>

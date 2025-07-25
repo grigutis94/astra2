@@ -86,10 +86,10 @@ const PurposeStep = () => {
     <div className="space-y-8">
       {/* Header */}
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+        <h2 className="text-2xl font-bold text-neutral-dark mb-3">
           {t('purposeStep.title')}
         </h2>
-        <p className="text-lg text-gray-600 dark:text-gray-300">
+        <p className="text-lg text-muted">
           {t('purposeStep.subtitle')}
         </p>
       </div>

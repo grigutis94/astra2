@@ -124,17 +124,17 @@ const MaterialStep = () => {
     <div className="space-y-8">
       {/* Header */}
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+        <h2 className="text-2xl font-bold text-neutral-dark mb-3">
           {t('materialStep.title')}
         </h2>
-        <p className="text-lg text-gray-600 dark:text-gray-300">
+        <p className="text-lg text-muted">
           {t('materialStep.subtitle')}
         </p>
       </div>
 
       {/* Material Selection */}
       <div>
-        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+        <h3 className="text-xl font-semibold text-neutral-dark mb-6">
           {t('materialStep.material')}
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -162,10 +162,10 @@ const MaterialStep = () => {
                 
                 <div className={`relative p-6 rounded-2xl border-2 transition-all duration-300 ${
                   material === key
-                    ? 'border-astra bg-astra/5 dark:bg-astra/10'
+                    ? 'border-primary-blue bg-primary-blue/5'
                     : isRecommended
-                    ? 'border-green-500/50 bg-green-50/50 dark:bg-green-900/10'
-                    : 'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800'
+                    ? 'border-highlight-green/50 bg-success-light'
+                    : 'border-border-primary bg-white'
                 }`}>
                   {/* Recommendation badge */}
                   {isRecommended && (
@@ -178,7 +178,7 @@ const MaterialStep = () => {
                   <div className={`absolute top-3 left-3 w-6 h-6 border-2 rounded-full flex items-center justify-center transition-all duration-200 ${
                     material === key 
                       ? 'border-blue-500 bg-blue-500 shadow-lg' 
-                      : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700'
+                      : 'border-border-primary bg-white'
                   }`}>
                     {material === key && (
                       <div className="w-3 h-3 bg-white rounded-full"></div>
@@ -190,10 +190,10 @@ const MaterialStep = () => {
                   
                   <div className="space-y-3">
                     <div>
-                      <h4 className="text-lg font-bold text-gray-900 dark:text-white">
+                      <h4 className="text-lg font-bold text-neutral-dark">
                         {option.title}
                       </h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                      <p className="text-sm text-muted">
                         {option.description}
                       </p>
                     </div>

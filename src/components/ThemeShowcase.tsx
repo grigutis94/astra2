@@ -26,48 +26,50 @@ const ThemeShowcase: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
             {/* Primary Blue */}
             <div className="text-center">
-              <div className="w-full h-24 bg-primary-blue rounded-lg mb-3 shadow-astra-md"></div>
+              <div className="w-full h-24 bg-primary-blue rounded-lg mb-3 shadow-md"></div>
               <h3 className="font-semibold text-neutral-dark">Primary Blue</h3>
-              <p className="text-sm text-neutral-dark-600">#0057B8</p>
-              <p className="text-xs text-neutral-dark-500 mt-1">Buttons, Links, Headers</p>
+              <p className="text-sm text-muted">#0057B8</p>
+              <p className="text-xs text-muted mt-1">Buttons, Links, Headers</p>
             </div>
             
             {/* Accent Orange */}
             <div className="text-center">
-              <div className="w-full h-24 bg-accent-orange rounded-lg mb-3 shadow-astra-md"></div>
+              <div className="w-full h-24 bg-accent-orange rounded-lg mb-3 shadow-md"></div>
               <h3 className="font-semibold text-neutral-dark">Accent Orange</h3>
-              <p className="text-sm text-neutral-dark-600">#F28C00</p>
-              <p className="text-xs text-neutral-dark-500 mt-1">CTAs, Highlights</p>
+              <p className="text-sm text-muted">#F28C00</p>
+              <p className="text-xs text-muted mt-1">CTAs, Highlights</p>
             </div>
             
             {/* Neutral Dark */}
             <div className="text-center">
-              <div className="w-full h-24 bg-neutral-dark rounded-lg mb-3 shadow-astra-md"></div>
+              <div className="w-full h-24 bg-white border-4 border-neutral-dark rounded-lg mb-3 shadow-md flex items-center justify-center">
+                <span className="text-neutral-dark font-bold text-sm">Text Color Sample</span>
+              </div>
               <h3 className="font-semibold text-neutral-dark">Neutral Dark</h3>
-              <p className="text-sm text-neutral-dark-600">#333333</p>
-              <p className="text-xs text-neutral-dark-500 mt-1">Text, Navigation</p>
+              <p className="text-sm text-muted">#333333</p>
+              <p className="text-xs text-muted mt-1">Text, Navigation</p>
             </div>
             
             {/* Neutral Light */}
             <div className="text-center">
-              <div className="w-full h-24 bg-neutral-light border-2 border-neutral-dark-200 rounded-lg mb-3 shadow-astra-md"></div>
+              <div className="w-full h-24 bg-neutral-light border-2 border-border-primary rounded-lg mb-3 shadow-md"></div>
               <h3 className="font-semibold text-neutral-dark">Neutral Light</h3>
-              <p className="text-sm text-neutral-dark-600">#F5F5F5</p>
-              <p className="text-xs text-neutral-dark-500 mt-1">Backgrounds</p>
+              <p className="text-sm text-muted">#F5F5F5</p>
+              <p className="text-xs text-muted mt-1">Backgrounds</p>
             </div>
             
             {/* Highlight Green */}
             <div className="text-center">
-              <div className="w-full h-24 bg-highlight-green rounded-lg mb-3 shadow-astra-md"></div>
+              <div className="w-full h-24 bg-highlight-green rounded-lg mb-3 shadow-md"></div>
               <h3 className="font-semibold text-neutral-dark">Highlight Green</h3>
-              <p className="text-sm text-neutral-dark-600">#00A34A</p>
-              <p className="text-xs text-neutral-dark-500 mt-1">Success, Badges</p>
+              <p className="text-sm text-muted">#00A34A</p>
+              <p className="text-xs text-muted mt-1">Success, Badges</p>
             </div>
           </div>
         </section>
 
         {/* Button Variants */}
-        <section className="bg-white rounded-2xl p-8 shadow-astra-lg">
+        <section className="card p-8">
           <h2 className="text-3xl font-bold text-neutral-dark mb-8">Button Components</h2>
           
           <div className="space-y-8">
@@ -105,7 +107,7 @@ const ThemeShowcase: React.FC = () => {
         </section>
 
         {/* Alerts and Badges */}
-        <section className="bg-white rounded-2xl p-8 shadow-astra-lg">
+        <section className="card p-8">
           <h2 className="text-3xl font-bold text-neutral-dark mb-8">Alerts & Badges</h2>
           
           <div className="space-y-6">
@@ -142,7 +144,7 @@ const ThemeShowcase: React.FC = () => {
         </section>
 
         {/* Forms */}
-        <section className="bg-white rounded-2xl p-8 shadow-astra-lg">
+        <section className="card p-8">
           <h2 className="text-3xl font-bold text-neutral-dark mb-8">Form Components</h2>
           
           <div className="max-w-md space-y-6">
@@ -181,7 +183,7 @@ const ThemeShowcase: React.FC = () => {
         </section>
 
         {/* Cards */}
-        <section className="bg-white rounded-2xl p-8 shadow-astra-lg">
+        <section className="card p-8">
           <h2 className="text-3xl font-bold text-neutral-dark mb-8">Card Components</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -190,7 +192,7 @@ const ThemeShowcase: React.FC = () => {
                 <h3 className="text-lg font-semibold text-neutral-dark">Cylindrical Tank</h3>
               </div>
               <div className="card-body">
-                <p className="text-neutral-dark-600">
+                <p className="text-muted">
                   Standard cylindrical tank configuration with customizable dimensions 
                   and accessories.
                 </p>
@@ -209,7 +211,7 @@ const ThemeShowcase: React.FC = () => {
                 <h3 className="text-lg font-semibold text-neutral-dark">Rectangular Tank</h3>
               </div>
               <div className="card-body">
-                <p className="text-neutral-dark-600">
+                <p className="text-muted">
                   Rectangular tank design suitable for space-constrained installations
                   and specialized applications.
                 </p>
@@ -227,7 +229,7 @@ const ThemeShowcase: React.FC = () => {
                 <h3 className="text-lg font-semibold text-neutral-dark">Custom Solution</h3>
               </div>
               <div className="card-body">
-                <p className="text-neutral-dark-600">
+                <p className="text-muted">
                   Need something specific? Contact our engineering team for 
                   custom tank solutions.
                 </p>
@@ -243,7 +245,7 @@ const ThemeShowcase: React.FC = () => {
         </section>
 
         {/* Typography */}
-        <section className="bg-white rounded-2xl p-8 shadow-astra-lg">
+        <section className="card p-8">
           <h2 className="text-3xl font-bold text-neutral-dark mb-8">Typography</h2>
           
           <div className="space-y-6">
@@ -263,7 +265,7 @@ const ThemeShowcase: React.FC = () => {
               <p className="text-base text-neutral-dark">
                 Regular paragraph text for body content and descriptions.
               </p>
-              <p className="text-sm text-neutral-dark-600">
+              <p className="text-sm text-muted">
                 Small text for captions, notes, and secondary information.
               </p>
             </div>
@@ -277,9 +279,9 @@ const ThemeShowcase: React.FC = () => {
         </section>
 
         {/* Footer */}
-        <footer className="text-center bg-white rounded-2xl p-8 shadow-astra-lg">
+        <footer className="text-center card p-8">
           <Logo size="md" className="mb-4 justify-center" />
-          <p className="text-neutral-dark-600">
+          <p className="text-muted">
             © 2025 Astra LT. Professional tank configuration solutions.
           </p>
         </footer>

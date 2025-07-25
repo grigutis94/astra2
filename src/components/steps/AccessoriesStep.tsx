@@ -112,10 +112,10 @@ const AccessoriesStep = () => {
     <div className="space-y-8">
       {/* Header */}
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+        <h2 className="text-2xl font-bold text-neutral-dark mb-3">
           {t('accessoriesStep.title')}
         </h2>
-        <p className="text-lg text-gray-600 dark:text-gray-300">
+        <p className="text-lg text-muted">
           {t('accessoriesStep.subtitle')}
         </p>
       </div>
@@ -147,24 +147,24 @@ const AccessoriesStep = () => {
               
               <div className={`relative p-6 rounded-2xl border-2 transition-all duration-300 ${
                 isSelected
-                  ? 'border-astra bg-astra/5 dark:bg-astra/10'
+                  ? 'border-primary-blue bg-primary-blue/5'
                   : isRecommended
-                  ? 'border-green-500/50 bg-green-50/50 dark:bg-green-900/10'
-                  : 'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800'
+                  ? 'border-highlight-green/50 bg-success-light'
+                  : 'border-border-primary bg-white'
               }`}>
                 {/* Badges */}
                 <div className="absolute top-3 right-3 flex gap-2">
                   {isRecommended && (
-                    <div className="px-2 py-1 bg-green-500 text-white text-xs font-semibold rounded-full">
+                    <div className="px-2 py-1 bg-highlight-green text-white text-xs font-semibold rounded-full">
                       {t('accessoriesStep.recommended')}
                     </div>
                   )}
                   <div className={`px-2 py-1 text-xs font-semibold rounded-full ${
                     option.estimatedCost === 'Low' 
-                      ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                      ? 'badge badge-success'
                       : option.estimatedCost === 'Medium' || option.estimatedCost === 'Low-Medium'
-                      ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                      : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                      ? 'badge badge-warning'
+                      : 'badge badge-error'
                   }`}>
                     {t(`accessoriesStep.costLevels.${option.estimatedCost}`)}
                   </div>
@@ -173,8 +173,8 @@ const AccessoriesStep = () => {
                 {/* Selection indicator - Radio button style */}
                 <div className={`absolute top-3 left-3 w-6 h-6 border-2 rounded-full flex items-center justify-center transition-all duration-200 ${
                   isSelected 
-                    ? 'border-blue-500 bg-blue-500 shadow-lg' 
-                    : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700'
+                    ? 'border-primary-blue bg-primary-blue shadow-lg' 
+                    : 'border-border-primary bg-white'
                 }`}>
                   {isSelected && (
                     <div className="w-3 h-3 bg-white rounded-full"></div>
@@ -186,17 +186,17 @@ const AccessoriesStep = () => {
                   {/* Icon and Title */}
                   <div className="text-center">
                     <div className="text-4xl mb-3">{option.icon}</div>
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
+                    <h3 className="text-lg font-bold text-neutral-dark mb-2">
                       {option.title}
                     </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                    <p className="text-sm text-muted leading-relaxed">
                       {option.description}
                     </p>
                   </div>
                   
                   {/* Benefits */}
                   <div className="space-y-2">
-                    <h4 className="text-sm font-semibold text-astra">{t('accessoriesStep.benefits')}:</h4>
+                    <h4 className="text-sm font-semibold text-primary-blue">{t('accessoriesStep.benefits')}:</h4>
                     <ul className="space-y-1">
                       {option.benefits.map((benefit, index) => (
                         <li key={index} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400">
