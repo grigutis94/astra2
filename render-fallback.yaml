@@ -2,7 +2,7 @@ services:
   - type: web
     name: astra-tank-configurator
     env: node
-    buildCommand: npm ci && npm run build
+    buildCommand: npm ci && npm run build:skip-types
     startCommand: npm start
     envVars:
       - key: NODE_VERSION
