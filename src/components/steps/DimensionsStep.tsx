@@ -6,7 +6,7 @@ import { useTranslation } from '../../contexts/LanguageContext';
 const DimensionsStep = () => {
   const { register, formState: { errors }, watch, setValue } = useFormContext<TankFormData>();
   const [showVolumeCalculation, setShowVolumeCalculation] = useState(false);
-  const { t } = useTranslation();
+  const { t, tString } = useTranslation();
   
   // Watch form values for automatic volume calculation and validation
   const purpose = watch('purpose');
@@ -84,7 +84,7 @@ const DimensionsStep = () => {
             <input
               type="radio"
               value="cylindrical"
-              {...register('tankType', { required: t('dimensionsStep.validation.selectType') })}
+              {...register('tankType', { required: tString('dimensionsStep.validation.selectType') })}
               className="sr-only"
             />
             <div className="text-center">
@@ -106,7 +106,7 @@ const DimensionsStep = () => {
             <input
               type="radio"
               value="rectangular"
-              {...register('tankType', { required: t('dimensionsStep.validation.selectType') })}
+              {...register('tankType', { required: tString('dimensionsStep.validation.selectType') })}
               className="sr-only"
             />
             <div className="text-center">
@@ -140,9 +140,9 @@ const DimensionsStep = () => {
               max="20000"
               step="1"
               {...register('height', { 
-                required: t('dimensionsStep.validation.heightRequired'),
-                min: { value: 100, message: t('dimensionsStep.validation.heightMin').replace('{{min}}', '100') },
-                max: { value: 20000, message: t('dimensionsStep.validation.heightMax').replace('{{max}}', '20,000') }
+                required: tString('dimensionsStep.validation.heightRequired'),
+                min: { value: 100, message: tString('dimensionsStep.validation.heightMin').replace('{{min}}', '100') },
+                max: { value: 20000, message: tString('dimensionsStep.validation.heightMax').replace('{{max}}', '20,000') }
               })}
               className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-700 border-2 border-slate-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-astra focus:border-astra transition-all duration-200"
               placeholder="e.g. 2000"
@@ -165,9 +165,9 @@ const DimensionsStep = () => {
                 max="10000"
                 step="1"
                 {...register('diameter', { 
-                  required: t('dimensionsStep.validation.diameterRequired'),
-                  min: { value: 100, message: t('dimensionsStep.validation.diameterMin').replace('{{min}}', '100') },
-                  max: { value: 10000, message: t('dimensionsStep.validation.diameterMax').replace('{{max}}', '10,000') }
+                  required: tString('dimensionsStep.validation.diameterRequired'),
+                  min: { value: 100, message: tString('dimensionsStep.validation.diameterMin').replace('{{min}}', '100') },
+                  max: { value: 10000, message: tString('dimensionsStep.validation.diameterMax').replace('{{max}}', '10,000') }
                 })}
                 className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-700 border-2 border-slate-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-astra focus:border-astra transition-all duration-200"
                 placeholder="e.g. 1000"
@@ -188,9 +188,9 @@ const DimensionsStep = () => {
                 max="10000"
                 step="1"
                 {...register('width', { 
-                  required: t('dimensionsStep.validation.widthRequired'),
-                  min: { value: 100, message: t('dimensionsStep.validation.widthMin').replace('{{min}}', '100') },
-                  max: { value: 10000, message: t('dimensionsStep.validation.widthMax').replace('{{max}}', '10,000') }
+                  required: tString('dimensionsStep.validation.widthRequired'),
+                  min: { value: 100, message: tString('dimensionsStep.validation.widthMin').replace('{{min}}', '100') },
+                  max: { value: 10000, message: tString('dimensionsStep.validation.widthMax').replace('{{max}}', '10,000') }
                 })}
                 className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-700 border-2 border-slate-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-astra focus:border-astra transition-all duration-200"
                 placeholder="e.g. 1000"
@@ -213,16 +213,16 @@ const DimensionsStep = () => {
               max={currentRequirements?.maxThickness || 50}
               step="0.1"
               {...register('wallThickness', { 
-                required: t('dimensionsStep.validation.thicknessRequired'),
+                required: tString('dimensionsStep.validation.thicknessRequired'),
                 min: { 
                   value: currentRequirements?.minThickness || 1, 
-                  message: t('dimensionsStep.validation.thicknessMin')
+                  message: tString('dimensionsStep.validation.thicknessMin')
                     .replace('{{min}}', String(currentRequirements?.minThickness || 1))
                     .replace('{{purpose}}', purpose || 'this')
                 },
                 max: { 
                   value: currentRequirements?.maxThickness || 50, 
-                  message: t('dimensionsStep.validation.thicknessMax')
+                  message: tString('dimensionsStep.validation.thicknessMax')
                     .replace('{{max}}', String(currentRequirements?.maxThickness || 50))
                 }
               })}
@@ -253,7 +253,7 @@ const DimensionsStep = () => {
                 {currentVolume.toFixed(3)} m³
               </p>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                = {(currentVolume * 1000).toFixed(0)} {t('common.volume').toLowerCase()}
+                = {(currentVolume * 1000).toFixed(0)} {tString('common.volume').toLowerCase()}
               </p>
             </div>
             <button

@@ -5,7 +5,7 @@ import type { TankFormData } from '../../types/tankTypes';
 
 const MaterialStep = () => {
   const { register, formState: { errors }, watch, setValue } = useFormContext<TankFormData>();
-  const { t } = useTranslation();
+  const { t, tString } = useTranslation();
   
   const purpose = watch('purpose');
   const material = watch('material');
@@ -156,7 +156,7 @@ const MaterialStep = () => {
                 <input
                   type="radio"
                   value={key}
-                  {...register('material', { required: t('dimensionsStep.validation.selectMaterial') })}
+                  {...register('material', { required: tString('dimensionsStep.validation.selectMaterial') })}
                   className="sr-only"
                 />
                 
@@ -245,7 +245,7 @@ const MaterialStep = () => {
                 <input
                   type="radio"
                   value={key}
-                  {...register('innerSurface', { required: t('dimensionsStep.validation.selectInnerSurface') })}
+                  {...register('innerSurface', { required: tString('dimensionsStep.validation.selectInnerSurface') })}
                   className="sr-only"
                 />
                 <div className="flex items-start gap-3">
@@ -297,7 +297,7 @@ const MaterialStep = () => {
                 <input
                   type="radio"
                   value={key}
-                  {...register('outerSurface', { required: t('dimensionsStep.validation.selectOuterSurface') })}
+                  {...register('outerSurface', { required: tString('dimensionsStep.validation.selectOuterSurface') })}
                   className="sr-only"
                 />
                 <div className="flex items-start gap-3">

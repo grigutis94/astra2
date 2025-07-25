@@ -445,40 +445,6 @@ const DraggableAccessory = ({ accessory, tankBounds, onPositionChange, onDragSta
   );
 };
 
-// Accessory Palette - shows available accessories to drag onto tank
-
-const AccessoryPalette = () => {
-  const accessories: AccessoryType[] = [
-    'supportLegs', 'thermalInsulation', 'cipSystem', 
-    'pressureRelief', 'levelIndicators', 'hatchesAndDrains'
-  ];
-
-  return (
-    <div className="absolute bottom-4 left-4 z-20 bg-white/90 dark:bg-gray-800/90 rounded-xl p-4 shadow-lg border border-gray-200 dark:border-gray-600">
-      <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Accessories Palette</h3>
-      <div className="grid grid-cols-2 gap-2">
-        {accessories.map((type) => (
-          <div
-            key={type}
-            className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 cursor-grab hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-300 transition-all"
-            draggable
-            onDragStart={(e) => {
-              e.dataTransfer.setData('accessoryType', type);
-            }}
-            title={type}
-          >
-            {type.slice(0, 3)}
-          </div>
-        ))}
-      </div>
-      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-        Drag to add to tank
-      </p>
-    </div>
-  );
-};
-
-
 // Enhanced Tank Model with Accessories
 const TankModelWithAccessories = ({ formData, accessories, transparency, onAccessoryPositionChange, onDragStateChange }: {
   formData: TankFormData;
@@ -768,6 +734,7 @@ const Tank3DPreview = ({ formData, transparency = 1.0 }: TankPreviewProps) => {
       });
 
       setAccessories(newAccessories);
+      console.log('Generated accessories from form data:', newAccessories);
     }
   }, [formData.accessories, formData.height, formData.tankType]);
 
@@ -777,16 +744,6 @@ const Tank3DPreview = ({ formData, transparency = 1.0 }: TankPreviewProps) => {
         acc.id === id ? { ...acc, position } : acc
       )
     );
-  };
-
-  const handleAccessoryDrop = (type: AccessoryType, position: [number, number, number]) => {
-    const newAccessory: AccessoryPosition = {
-      id: `${type}-${Date.now()}`,
-      type,
-      position,
-      rotation: [0, 0, 0],
-    };
-    setAccessories(prev => [...prev, newAccessory]);
   };
 
   // Calculate camera position based on tank size
@@ -833,33 +790,17 @@ const Tank3DPreview = ({ formData, transparency = 1.0 }: TankPreviewProps) => {
   const floorY = Math.min(-8, -(height / 2) - 2);
   
   return (
-    <div className="h-[450px] w-full rounded-3xl overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg relative"
-         onDrop={(e) => {
-           e.preventDefault();
-           const accessoryType = e.dataTransfer.getData('accessoryType') as AccessoryType;
-           if (accessoryType) {
-             // Convert drop position to 3D coordinates (simplified)
-             const rect = e.currentTarget.getBoundingClientRect();
-             const x = ((e.clientX - rect.left) / rect.width - 0.5) * 4;
-             const y = ((rect.bottom - e.clientY) / rect.height) * 4;
-             handleAccessoryDrop(accessoryType, [x, y, 0]);
-           }
-         }}
-         onDragOver={(e) => e.preventDefault()}
-    >
-      {/* Accessory Palette */}
-      <AccessoryPalette />
-
+    <div className="h-[450px] w-full rounded-3xl overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg relative">
       {/* Interactive 3D Controls */}
       <div className="absolute top-4 left-4 z-20 bg-white/90 dark:bg-gray-800/90 rounded-xl p-3 shadow-lg border border-gray-200 dark:border-gray-600">
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 bg-green-500 rounded-full"></div>
           <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
-            3D Edit Mode
+            3D Preview
           </span>
         </div>
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-          Drag accessories to position
+          Live tank visualization
         </p>
       </div>
 

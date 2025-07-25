@@ -5,7 +5,7 @@ import type { TankFormData } from '../../types/tankTypes';
 
 const AccessoriesStep = () => {
   const { register, watch, setValue } = useFormContext<TankFormData>();
-  const { t } = useTranslation();
+  const { t, tString } = useTranslation();
   
   const purpose = watch('purpose');
   const accessories = watch('accessories') || {};
@@ -252,7 +252,7 @@ const AccessoriesStep = () => {
                       {option.title}
                     </p>
                     <p className="text-xs text-gray-600 dark:text-gray-400">
-                      {t(`accessoriesStep.costLevels.${option.estimatedCost}`)} {t('accessoriesStep.estimatedCost').toLowerCase()}
+                      {t(`accessoriesStep.costLevels.${option.estimatedCost}`)} {tString('accessoriesStep.estimatedCost').toLowerCase()}
                     </p>
                   </div>
                 </div>

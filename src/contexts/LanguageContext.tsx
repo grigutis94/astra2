@@ -7,6 +7,7 @@ interface LanguageContextType {
   language: Language;
   setLanguage: (language: Language) => void;
   t: (key: string) => string | string[];
+  tString: (key: string) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -74,10 +75,20 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     }
   };
 
+  // Translation function that always returns string
+  const tString = (key: string): string => {
+    const result = t(key);
+    if (Array.isArray(result)) {
+      return result.join(', '); // Join arrays with comma for string representation
+    }
+    return result;
+  };
+
   const contextValue: LanguageContextType = {
     language,
     setLanguage,
-    t
+    t,
+    tString
   };
 
   return (
@@ -96,6 +107,6 @@ export const useLanguage = (): LanguageContextType => {
 };
 
 export const useTranslation = () => {
-  const { t } = useLanguage();
-  return { t };
+  const { t, tString } = useLanguage();
+  return { t, tString };
 };

@@ -63,7 +63,7 @@ const purposeRequirements: Record<PurposeKey, PurposeRequirement> = {
 
 const PurposeStep = () => {
   const { register, setValue, watch, formState: { errors } } = useFormContext<TankFormData>();
-  const { t } = useTranslation();
+  const { t, tString } = useTranslation();
   const purpose = watch('purpose');
 
   // Auto-adjust parameters when purpose changes
@@ -108,7 +108,7 @@ const PurposeStep = () => {
             <input
               type="radio"
               value={key}
-              {...register('purpose', { required: t('dimensionsStep.validation.selectPurpose') })}
+              {...register('purpose', { required: tString('dimensionsStep.validation.selectPurpose') })}
               className="sr-only"
             />
             
