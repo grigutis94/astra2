@@ -15,7 +15,7 @@ interface AccessoryPosition {
 }
 
 // Helper function to create tank geometry
-const createCylindricalTank = (radius: number, height: number, topType: string, bottomType: string, material?: string) => {
+const createCylindricalTank = (radius: number, height: number, topType: string, bottomType: string, material?: string, transparency: number = 1.0) => {
   const segments = 32;
   const group = new THREE.Group();
   
@@ -38,7 +38,9 @@ const createCylindricalTank = (radius: number, height: number, topType: string, 
     metalness: material === '304' || material === '316' ? 0.8 : 0.6,
     roughness: material === '304' || material === '316' ? 0.2 : 0.3,
     emissive: 0x101010,
-    emissiveIntensity: 0.05
+    emissiveIntensity: 0.05,
+    transparent: transparency < 1.0,
+    opacity: transparency
   });
   const cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
   cylinder.castShadow = true;
@@ -147,7 +149,7 @@ const createCylindricalTank = (radius: number, height: number, topType: string, 
   return { group, addLegs };
 };
 
-const createRectangularTank = (width: number, height: number, depth: number, material?: string) => {
+const createRectangularTank = (width: number, height: number, depth: number, material?: string, transparency: number = 1.0) => {
   const group = new THREE.Group();
   
   // Material color based on steel type
@@ -169,7 +171,9 @@ const createRectangularTank = (width: number, height: number, depth: number, mat
     metalness: material === '304' || material === '316' ? 0.8 : 0.6,
     roughness: material === '304' || material === '316' ? 0.2 : 0.3,
     emissive: 0x101010,
-    emissiveIntensity: 0.05
+    emissiveIntensity: 0.05,
+    transparent: transparency < 1.0,
+    opacity: transparency
   });
   const box = new THREE.Mesh(boxGeometry, boxMaterial);
   box.castShadow = true;
@@ -476,9 +480,10 @@ const AccessoryPalette = () => {
 
 
 // Enhanced Tank Model with Accessories
-const TankModelWithAccessories = ({ formData, accessories, onAccessoryPositionChange, onDragStateChange }: {
+const TankModelWithAccessories = ({ formData, accessories, transparency, onAccessoryPositionChange, onDragStateChange }: {
   formData: TankFormData;
   accessories: AccessoryPosition[];
+  transparency: number;
   onAccessoryPositionChange: (id: string, position: [number, number, number]) => void;
   onDragStateChange: (isDragging: boolean) => void;
 }) => {
@@ -567,7 +572,7 @@ const TankModelWithAccessories = ({ formData, accessories, onAccessoryPositionCh
       
       // Default tank if no form data
       if (!formData || !formData.tankType) {
-        const { group, addLegs } = createCylindricalTank(2, 5, 'flat', 'flat', formData?.material);
+        const { group, addLegs } = createCylindricalTank(2, 5, 'flat', 'flat', formData?.material, transparency);
         addLegs(4);
         groupRef.current.add(group);
         
@@ -596,7 +601,7 @@ const TankModelWithAccessories = ({ formData, accessories, onAccessoryPositionCh
         const bottomType = formData.bottomType || 'flat';
         
         // Create the tank
-        const tankObj = createCylindricalTank(radius, height, topType, bottomType, formData.material);
+        const tankObj = createCylindricalTank(radius, height, topType, bottomType, formData.material, transparency);
         
         // Add legs - ensure we convert string to number
         const numLegs = Number(formData.legs) || 4;
@@ -626,7 +631,7 @@ const TankModelWithAccessories = ({ formData, accessories, onAccessoryPositionCh
         const depth = widthInMm / 1000; // Use width for depth to make it square
         
         // Create appropriate tank based on orientation
-        const tankObj = createRectangularTank(width, height, depth, formData.material);
+        const tankObj = createRectangularTank(width, height, depth, formData.material, transparency);
         
         // Add legs - ensure we convert string to number
         const numLegs = Number(formData.legs) || 4;
@@ -653,7 +658,7 @@ const TankModelWithAccessories = ({ formData, accessories, onAccessoryPositionCh
       console.error("Error creating tank model:", error);
       setHasError(true);
     }
-  }, [formData]);
+  }, [formData, transparency]);
   
   // This animation is now handled in the combined useFrame below
   
@@ -700,9 +705,10 @@ const TankModelWithAccessories = ({ formData, accessories, onAccessoryPositionCh
 // The main 3D tank preview component
 interface TankPreviewProps {
   formData: TankFormData;
+  transparency?: number;
 }
 
-const Tank3DPreview = ({ formData }: TankPreviewProps) => {
+const Tank3DPreview = ({ formData, transparency = 1.0 }: TankPreviewProps) => {
   const [accessories, setAccessories] = useState<AccessoryPosition[]>([]);
   const [isDraggingAccessory, setIsDraggingAccessory] = useState(false);
   const orbitControlsRef = useRef<any>(null);
@@ -948,6 +954,7 @@ const Tank3DPreview = ({ formData }: TankPreviewProps) => {
         <TankModelWithAccessories 
           formData={formData} 
           accessories={accessories}
+          transparency={transparency}
           onAccessoryPositionChange={handleAccessoryPositionChange}
           onDragStateChange={handleGlobalDragStateChange}
         />

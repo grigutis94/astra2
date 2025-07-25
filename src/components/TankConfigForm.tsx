@@ -16,6 +16,7 @@ import SummaryStep from './steps/SummaryStep';
 
 const TankConfigForm = () => {
   const [currentStep, setCurrentStep] = useState(0);
+  const [tankTransparency, setTankTransparency] = useState(1.0); // 1.0 = fully opaque, 0.1 = most transparent
   const { t } = useTranslation();
   
   const methods = useForm<TankFormData>({
@@ -181,7 +182,7 @@ const TankConfigForm = () => {
 
             {/* 3D Preview Section */}
             <div className="lg:sticky lg:top-8 h-fit">
-              <Tank3DPreview formData={formValues} />
+              <Tank3DPreview formData={formValues} transparency={tankTransparency} />
               
               {/* Quick Stats */}
               <div className="mt-6 grid grid-cols-2 gap-4">
@@ -196,6 +197,34 @@ const TankConfigForm = () => {
                   <p className="text-lg font-bold text-gray-900 dark:text-white">
                     {formValues.material ? `AISI ${formValues.material}` : 'Not selected'}
                   </p>
+                </div>
+              </div>
+              
+              {/* Transparency Control */}
+              <div className="mt-4 bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white">Talpos skaidrumas</p>
+                  <span className="text-sm font-medium text-astra">
+                    {Math.round((1 - tankTransparency) * 100)}% skaidrumas
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-gray-600 dark:text-gray-400">Nepermatomas</span>
+                  <input
+                    type="range"
+                    min="0"
+                    max="90"
+                    step="10"
+                    value={Math.round((1 - tankTransparency) * 100)}
+                    onChange={(e) => setTankTransparency(1 - (parseFloat(e.target.value) / 100))}
+                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 
+                               [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 
+                               [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-astra 
+                               [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md
+                               [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full 
+                               [&::-moz-range-thumb]:bg-astra [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-0"
+                  />
+                  <span className="text-xs text-gray-600 dark:text-gray-400">Skaidrus</span>
                 </div>
               </div>
             </div>

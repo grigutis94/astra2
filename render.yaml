@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: astra-tank-configurator
+    env: node
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    plan: free
