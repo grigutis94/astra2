@@ -278,185 +278,6 @@ const ErrorCube = () => {
   );
 };
 
-// Tank model component - this is no longer used, replaced by TankModelWithAccessories
-const TankModel = ({ formData }: { formData: TankFormData }) => {
-  const groupRef = useRef<THREE.Group>(null);
-  const [hasError, setHasError] = useState(false);
-  
-  // Position the entire group above the grid floor
-  useEffect(() => {
-    if (groupRef.current && formData) {
-      const heightInMm = formData.height || 1000;
-      const height = heightInMm / 1000;
-      const floorY = Math.min(-8, -(height / 2) - 2);
-      
-      // Calculate leg height based on tank dimensions and orientation
-      let legHeight;
-      let effectiveHeight = height; // Height for positioning calculation
-      
-      if (formData.tankType === 'cylindrical') {
-        const diameterInMm = formData.diameter || 500;
-        const radius = (diameterInMm / 2) / 1000;
-        const bottomType = formData.bottomType || 'flat';
-        
-        // Calculate leg height based on bottom type
-        if (bottomType === 'cone') {
-          legHeight = radius * 1.2; // Taller legs for cone clearance
-        } else if (bottomType === 'dome') {
-          legHeight = radius * 1.2; // Same tall legs for dome clearance
-        } else {
-          legHeight = radius * 0.6; // Standard legs for flat bottom
-        }
-        
-        // For horizontal orientation, effective height is the diameter
-        if (formData.orientation === 'horizontal') {
-          effectiveHeight = radius * 2; // diameter
-        }
-      } else {
-        const widthInMm = formData.width || 500;
-        const width = widthInMm / 1000;
-        legHeight = width * 0.6;
-        
-        // For horizontal orientation, effective height is the width
-        if (formData.orientation === 'horizontal') {
-          effectiveHeight = width;
-        }
-      }
-      
-      // Position tank so the legs touch the floor
-      // Tank center should be at floor level + half effective height + leg height
-      groupRef.current.position.y = floorY + effectiveHeight / 2 + legHeight;
-    }
-  }, [formData]);
-  
-  useEffect(() => {
-    if (!groupRef.current) return;
-    
-    try {
-      // Clear existing children
-      while(groupRef.current.children.length > 0) {
-        const object = groupRef.current.children[0];
-        groupRef.current.remove(object);
-      }
-      
-      // Default tank if no form data
-      if (!formData || !formData.tankType) {
-        const { group, addLegs } = createCylindricalTank(2, 5, 'flat', 'flat', formData?.material);
-        addLegs(4);
-        groupRef.current.add(group);
-        
-        // Position default tank properly on floor
-        const defaultHeight = 5;
-        const defaultRadius = 2;
-        const defaultLegHeight = defaultRadius * 0.6;
-        const floorY = Math.min(-8, -(defaultHeight / 2) - 2);
-        groupRef.current.position.y = floorY + defaultHeight / 2 + defaultLegHeight;
-        return;
-      }
-      
-      // Calculate dimensions based on form inputs
-      const heightInMm = formData.height || 1000;
-      
-      if (formData.tankType === 'cylindrical') {
-        const diameterInMm = formData.diameter || 500;
-        
-        // Convert from mm to 3D units with better scaling for large tanks
-        // Use 1000 as divisor to handle larger tanks properly
-        const radius = (diameterInMm / 2) / 1000;
-        const height = heightInMm / 1000;
-        
-        // Get top/bottom configuration from form data
-        const topType = formData.topType || 'flat';
-        const bottomType = formData.bottomType || 'flat';
-        
-        // Create the tank
-        const tankObj = createCylindricalTank(radius, height, topType, bottomType, formData.material);
-        
-        // Add legs - ensure we convert string to number
-        const numLegs = Number(formData.legs) || 4;
-        const isHorizontal = formData.orientation === 'horizontal';
-        tankObj.addLegs(numLegs, isHorizontal);
-        
-        // Rotate tank if horizontal - only rotate the tank parts, legs are already positioned correctly
-        if (formData.orientation === 'horizontal') {
-          tankObj.group.children.forEach(child => {
-            if (child instanceof THREE.Mesh && 
-                child.material instanceof THREE.MeshStandardMaterial && 
-                child.material.color.getHex() !== 0x64748b) {
-              // This is a tank part (not a leg) - rotate it
-              child.rotation.z = Math.PI / 2;
-            }
-          });
-        }
-        
-        groupRef.current.add(tankObj.group);
-      } else if (formData.tankType === 'rectangular') {
-        const widthInMm = formData.width || 500;
-        
-        // Convert from mm to 3D units with better scaling for large tanks
-        // Use 1000 as divisor to handle larger tanks properly
-        const width = widthInMm / 1000;
-        const height = heightInMm / 1000;
-        const depth = widthInMm / 1000; // Use width for depth to make it square
-        
-        // Create appropriate tank based on orientation
-        const tankObj = createRectangularTank(width, height, depth, formData.material);
-        
-        // Add legs - ensure we convert string to number
-        const numLegs = Number(formData.legs) || 4;
-        const isHorizontal = formData.orientation === 'horizontal';
-        tankObj.addLegs(numLegs, isHorizontal);
-        
-        // For horizontal orientation, rotate only the tank parts, legs are already positioned correctly
-        if (formData.orientation === 'horizontal') {
-          tankObj.group.children.forEach(child => {
-            if (child instanceof THREE.Mesh && 
-                child.material instanceof THREE.MeshStandardMaterial && 
-                child.material.color.getHex() !== 0x64748b) {
-              // This is a tank part (not a leg) - rotate it
-              child.rotation.z = Math.PI / 2;
-            }
-          });
-        }
-        
-        groupRef.current.add(tankObj.group);
-      }
-      
-      setHasError(false);
-    } catch (error) {
-      console.error("Error creating tank model:", error);
-      setHasError(true);
-    }
-  }, [formData]);
-  
-  // This animation is now handled in the combined useFrame below
-  
-  // Add hover effect and selection highlight
-  useFrame(({ clock, mouse, viewport }) => {
-    if (groupRef.current && !hasError) {
-      // Gentle idle animation
-      groupRef.current.rotation.y = Math.sin(clock.getElapsedTime() * 0.2) * 0.2;
-      
-      // Subtle mouse follow - tank slightly rotates to follow mouse position
-      const mouseX = (mouse.x * viewport.width) / 20;
-      const mouseY = (mouse.y * viewport.height) / 20;
-      
-      groupRef.current.rotation.x = THREE.MathUtils.lerp(
-        groupRef.current.rotation.x || 0,
-        mouseY * 0.02,
-        0.05
-      );
-      
-      groupRef.current.rotation.y = THREE.MathUtils.lerp(
-        groupRef.current.rotation.y || 0,
-        Math.sin(clock.getElapsedTime() * 0.2) * 0.2 + mouseX * 0.02,
-        0.05
-      );
-    }
-  });
-  
-  return hasError ? <ErrorCube /> : <group ref={groupRef} />;
-};
 
 // Supaprastintas Draggable 3D Accessory komponentas
 const DraggableAccessory = ({ accessory, tankBounds, onPositionChange, onDragStateChange }: {
@@ -621,9 +442,8 @@ const DraggableAccessory = ({ accessory, tankBounds, onPositionChange, onDragSta
 };
 
 // Accessory Palette - shows available accessories to drag onto tank
-const AccessoryPalette = ({ onAccessoryDrop }: {
-  onAccessoryDrop: (type: AccessoryType, position: [number, number, number]) => void;
-}) => {
+
+const AccessoryPalette = () => {
   const accessories: AccessoryType[] = [
     'supportLegs', 'thermalInsulation', 'cipSystem', 
     'pressureRelief', 'levelIndicators', 'hatchesAndDrains'
@@ -653,6 +473,7 @@ const AccessoryPalette = ({ onAccessoryDrop }: {
     </div>
   );
 };
+
 
 // Enhanced Tank Model with Accessories
 const TankModelWithAccessories = ({ formData, accessories, onAccessoryPositionChange, onDragStateChange }: {
@@ -1021,7 +842,7 @@ const Tank3DPreview = ({ formData }: TankPreviewProps) => {
          onDragOver={(e) => e.preventDefault()}
     >
       {/* Accessory Palette */}
-      <AccessoryPalette onAccessoryDrop={handleAccessoryDrop} />
+      <AccessoryPalette />
 
       {/* Interactive 3D Controls */}
       <div className="absolute top-4 left-4 z-20 bg-white/90 dark:bg-gray-800/90 rounded-xl p-3 shadow-lg border border-gray-200 dark:border-gray-600">
