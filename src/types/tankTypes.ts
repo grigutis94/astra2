@@ -26,6 +26,16 @@ export type TankFormData = {
     hatchesAndDrains: boolean; // Hatches, clamps, drains
   };
   
+  // Accessory size configuration
+  accessorySize?: {
+    supportLegs?: 'small' | 'normal' | 'large' | 'extra-large';
+    thermalInsulation?: 'small' | 'normal' | 'large' | 'extra-large';
+    cipSystem?: 'small' | 'normal' | 'large' | 'extra-large';
+    pressureRelief?: 'small' | 'normal' | 'large' | 'extra-large';
+    levelIndicators?: 'small' | 'normal' | 'large' | 'extra-large';
+    hatchesAndDrains?: 'small' | 'normal' | 'large' | 'extra-large';
+  };
+  
   // Legacy fields (keeping for 3D preview compatibility)
   orientation: 'vertical' | 'horizontal';
   legs: number;

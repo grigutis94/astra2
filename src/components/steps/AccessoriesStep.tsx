@@ -4,35 +4,30 @@ import { useTranslation } from '../../contexts/LanguageContext';
 import type { TankFormData } from '../../types/tankTypes';
 
 const AccessoriesStep = () => {
-  const { register, watch } = useFormContext<TankFormData>();
+  const { register, watch, setValue } = useFormContext<TankFormData>();
   const { t, tString } = useTranslation();
   
   const purpose = watch('purpose');
   const accessories = watch('accessories') || {};
+  const legs = watch('legs');
 
   // Debug accessories changes
   useEffect(() => {
     console.log('AccessoriesStep - accessories changed:', accessories);
   }, [accessories]);
 
-  // Remove the initialization useEffect completely - let default values from TankConfigForm work
-  // useEffect(() => {
-  //   const currentAccessories = watch('accessories');
-  //   console.log('AccessoriesStep initialization check:', currentAccessories);
-  //   
-  //   // Only initialize if accessories is null/undefined (not if it's an object with false values)
-  //   if (!currentAccessories) {
-  //     console.log('Initializing accessories to false values');
-  //     setValue('accessories', {
-  //       supportLegs: false,
-  //       thermalInsulation: false,
-  //       cipSystem: false,
-  //       pressureRelief: false,
-  //       levelIndicators: false,
-  //       hatchesAndDrains: false,
-  //     });
-  //   }
-  // }, [setValue, watch]);
+  // Update legs setting based on supportLegs accessory
+  useEffect(() => {
+    if (accessories.supportLegs) {
+      // If supportLegs is selected and legs is not set, default to 4
+      if (!legs || legs === 0) {
+        setValue('legs', 4);
+      }
+    } else {
+      // If supportLegs is not selected, set legs to 0 (tank on ground)
+      setValue('legs', 0);
+    }
+  }, [accessories.supportLegs, legs, setValue]);
 
   // Helper function to get accessory info with translations
   const getAccessoryInfo = (accessoryKey: string) => {
@@ -218,6 +213,51 @@ const AccessoriesStep = () => {
                       <span className="font-semibold">{t('accessoriesStep.technical')}:</span> {option.technical}
                     </p>
                   </div>
+                  
+                  {/* Configuration Controls - shown when accessory is selected */}
+                  {isSelected && (
+                    <div className="pt-4 border-t border-gray-200 dark:border-gray-600 space-y-3">
+                      {/* Support Legs - Number of legs control */}
+                      {key === 'supportLegs' && (
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Number of Legs
+                          </label>
+                          <select
+                            {...register('legs', { valueAsNumber: true })}
+                            className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-astra focus:border-transparent"
+                          >
+                            <option value={3}>3 Legs</option>
+                            <option value={4}>4 Legs (Recommended)</option>
+                            <option value={6}>6 Legs</option>
+                            <option value={8}>8 Legs</option>
+                          </select>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            More legs provide better stability
+                          </p>
+                        </div>
+                      )}
+                      
+                      {/* All accessories - Size control */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Size Scale
+                        </label>
+                        <select
+                          {...register(`accessorySize.${key}` as any)}
+                          className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-astra focus:border-transparent"
+                        >
+                          <option value="small">Small (0.8x)</option>
+                          <option value="normal">Normal (1.0x)</option>
+                          <option value="large">Large (1.2x)</option>
+                          <option value="extra-large">Extra Large (1.5x)</option>
+                        </select>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                          Adjust size to match tank proportions
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </label>

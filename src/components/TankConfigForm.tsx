@@ -37,19 +37,29 @@ const TankConfigForm = () => {
       innerSurface: 'standard',
       outerSurface: 'painted',
       
-      // Step 4: Accessories
+      // Step 4: Accessories - All unselected by default
       accessories: {
-        supportLegs: true,
+        supportLegs: false,
         thermalInsulation: false,
         cipSystem: false,
         pressureRelief: false,
         levelIndicators: false,
-        hatchesAndDrains: true,
+        hatchesAndDrains: false,
+      },
+      
+      // Accessory sizes - default to normal
+      accessorySize: {
+        supportLegs: 'normal',
+        thermalInsulation: 'normal',
+        cipSystem: 'normal',
+        pressureRelief: 'normal',
+        levelIndicators: 'normal',
+        hatchesAndDrains: 'normal',
       },
       
       // Legacy fields for 3D preview compatibility
       orientation: 'vertical',
-      legs: 4,
+      legs: 0, // No legs by default - tank sits on ground
       topType: 'flat',
       bottomType: 'flat',
       flangeCount: 0,

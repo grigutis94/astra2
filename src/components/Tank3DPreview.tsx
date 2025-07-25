@@ -284,33 +284,48 @@ const ErrorCube = () => {
 
 
 // Supaprastintas Draggable 3D Accessory komponentas
-const DraggableAccessory = ({ accessory, onPositionChange, onDragStateChange, tankInfo }: {
+const DraggableAccessory = ({ accessory, onPositionChange, onDragStateChange, tankInfo, accessorySize }: {
   accessory: AccessoryPosition;
   onPositionChange: (id: string, position: [number, number, number]) => void;
   onDragStateChange: (isDragging: boolean) => void;
-  tankInfo: { type: string; radius: number; height: number }; // Add tank info prop
+  tankInfo: { type: string; radius: number; height: number };
+  accessorySize?: 'small' | 'normal' | 'large' | 'extra-large';
 }) => {
   const meshRef = useRef<THREE.Mesh>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [hovered, setHovered] = useState(false);
 
-  // Create 3D geometry for each accessory type
+  // Create 3D geometry for each accessory type with size scaling
   const createAccessoryGeometry = (type: AccessoryType) => {
+    // Get size multiplier
+    const getSizeMultiplier = (size?: 'small' | 'normal' | 'large' | 'extra-large') => {
+      switch (size) {
+        case 'small': return 0.8;
+        case 'large': return 1.2;
+        case 'extra-large': return 1.5;
+        case 'normal':
+        default: return 1.0;
+      }
+    };
+    
+    const scale = getSizeMultiplier(accessorySize);
+    console.log(`Creating geometry for ${type} with size ${accessorySize} (scale: ${scale})`);
+    
     switch (type) {
       case 'supportLegs':
-        return <cylinderGeometry args={[0.1, 0.1, 1.0, 8]} />;
+        return <cylinderGeometry args={[0.1 * scale, 0.1 * scale, 1.0 * scale, 8]} />;
       case 'thermalInsulation':
-        return <boxGeometry args={[0.6, 1.6, 0.6]} />;
+        return <boxGeometry args={[0.6 * scale, 1.6 * scale, 0.6 * scale]} />;
       case 'cipSystem':
-        return <sphereGeometry args={[0.3, 16, 16]} />;
+        return <sphereGeometry args={[0.3 * scale, 16, 16]} />;
       case 'pressureRelief':
-        return <coneGeometry args={[0.2, 0.6, 8]} />;
+        return <coneGeometry args={[0.2 * scale, 0.6 * scale, 8]} />;
       case 'levelIndicators':
-        return <boxGeometry args={[0.2, 0.8, 0.2]} />;
+        return <boxGeometry args={[0.2 * scale, 0.8 * scale, 0.2 * scale]} />;
       case 'hatchesAndDrains':
-        return <cylinderGeometry args={[0.4, 0.4, 0.2, 16]} />;
+        return <cylinderGeometry args={[0.4 * scale, 0.4 * scale, 0.2 * scale, 16]} />;
       default:
-        return <boxGeometry args={[0.4, 0.4, 0.4]} />;
+        return <boxGeometry args={[0.4 * scale, 0.4 * scale, 0.4 * scale]} />;
     }
   };
 
@@ -370,7 +385,15 @@ const DraggableAccessory = ({ accessory, onPositionChange, onDragStateChange, ta
         
         // Calculate tank's actual vertical bounds (matching the positioning logic)
         const floorY = Math.min(-8, -(tankHeight / 2) - 2);
-        const legHeight = tankRadius * 0.6;
+        
+        // Check if tank has legs - this info should be passed via tankInfo
+        // For now, we'll use a default calculation but this could be improved
+        const hasLegs = tankInfo.radius > 0; // Assume legs exist if we have tank info
+        let legHeight = 0;
+        if (hasLegs) {
+          legHeight = tankRadius * 0.6;
+        }
+        
         const tankLowestPoint = floorY + legHeight;
         const tankHighestPoint = tankLowestPoint + tankHeight;
         
@@ -389,7 +412,8 @@ const DraggableAccessory = ({ accessory, onPositionChange, onDragStateChange, ta
           
           // Calculate angle for rotation around tank
           let angle = Math.atan2(currentPos.z, currentPos.x);
-          angle += deltaX * sensitivity * 3; // Rotate around tank with mouse X movement
+          // Reverse deltaX for more intuitive movement (drag right = move right)
+          angle -= deltaX * sensitivity * 3; // Rotate around tank with mouse X movement
           
           const projectedX = Math.cos(angle) * targetDistance;
           const projectedZ = Math.sin(angle) * targetDistance;
@@ -408,19 +432,23 @@ const DraggableAccessory = ({ accessory, onPositionChange, onDragStateChange, ta
           
           if (minDist === distToLeft) {
             // Left face - constrain to face, allow sliding along Z
-            const newZ = Math.max(-tankRadius + 0.1, Math.min(tankRadius - 0.1, currentPos.z + deltaX * sensitivity * 5));
+            // Reverse deltaX for more intuitive movement (drag right = move right)
+            const newZ = Math.max(-tankRadius + 0.1, Math.min(tankRadius - 0.1, currentPos.z - deltaX * sensitivity * 5));
             newPosition = [-tankRadius - offset, constrainedY, newZ];
           } else if (minDist === distToRight) {
             // Right face - constrain to face, allow sliding along Z
-            const newZ = Math.max(-tankRadius + 0.1, Math.min(tankRadius - 0.1, currentPos.z + deltaX * sensitivity * 5));
+            // Reverse deltaX for more intuitive movement (drag right = move right)
+            const newZ = Math.max(-tankRadius + 0.1, Math.min(tankRadius - 0.1, currentPos.z - deltaX * sensitivity * 5));
             newPosition = [tankRadius + offset, constrainedY, newZ];
           } else if (minDist === distToFront) {
             // Front face - constrain to face, allow sliding along X
-            const newX = Math.max(-tankRadius + 0.1, Math.min(tankRadius - 0.1, currentPos.x + deltaX * sensitivity * 5));
+            // Reverse deltaX for more intuitive movement (drag right = move right)
+            const newX = Math.max(-tankRadius + 0.1, Math.min(tankRadius - 0.1, currentPos.x - deltaX * sensitivity * 5));
             newPosition = [newX, constrainedY, -tankRadius - offset];
           } else {
             // Back face - constrain to face, allow sliding along X
-            const newX = Math.max(-tankRadius + 0.1, Math.min(tankRadius - 0.1, currentPos.x + deltaX * sensitivity * 5));
+            // Reverse deltaX for more intuitive movement (drag right = move right)
+            const newX = Math.max(-tankRadius + 0.1, Math.min(tankRadius - 0.1, currentPos.x - deltaX * sensitivity * 5));
             newPosition = [newX, constrainedY, tankRadius + offset];
           }
         }
@@ -510,7 +538,7 @@ const DraggableAccessory = ({ accessory, onPositionChange, onDragStateChange, ta
           anchorX="center"
           anchorY="middle"
         >
-          Drag to slide along tank surface
+          Drag to move along tank surface
         </Text>
       )}
     </mesh>
@@ -527,7 +555,6 @@ const TankModelWithAccessories = ({ formData, accessories, transparency, onAcces
 }) => {
   const groupRef = useRef<THREE.Group>(null);
   const [hasError, setHasError] = useState(false);
-  const [tankBounds, setTankBounds] = useState({ width: 2, height: 2, depth: 2 });
   const [tankInfo, setTankInfo] = useState({ type: 'cylindrical', radius: 0.5, height: 1 });
 
   // Debug: log accessories received by TankModelWithAccessories
@@ -563,30 +590,6 @@ const TankModelWithAccessories = ({ formData, accessories, transparency, onAcces
     onDragStateChange(dragging);
   };
 
-  // Calculate tank bounds for accessory constraints - expand beyond tank to allow accessories outside
-  useEffect(() => {
-    if (formData) {
-      const heightInMm = formData.height || 1000;
-      const height = heightInMm / 1000;
-      
-      if (formData.tankType === 'cylindrical') {
-        const diameterInMm = formData.diameter || 500;
-        const diameter = diameterInMm / 1000;
-        // Expand bounds significantly beyond tank to allow accessories to be positioned outside
-        const expandedSize = diameter * 3; // 3x tank diameter for movement area
-        setTankBounds({ width: expandedSize, height: height * 2, depth: expandedSize });
-        console.log(`Tank bounds set for cylindrical tank: width=${expandedSize.toFixed(2)}, height=${(height * 2).toFixed(2)}, depth=${expandedSize.toFixed(2)} (tank diameter: ${diameter.toFixed(2)})`);
-      } else {
-        const widthInMm = formData.width || 500;
-        const width = widthInMm / 1000;
-        // Expand bounds significantly beyond tank to allow accessories to be positioned outside
-        const expandedSize = width * 3; // 3x tank width for movement area
-        setTankBounds({ width: expandedSize, height: height * 2, depth: expandedSize });
-        console.log(`Tank bounds set for rectangular tank: width=${expandedSize.toFixed(2)}, height=${(height * 2).toFixed(2)}, depth=${expandedSize.toFixed(2)} (tank width: ${width.toFixed(2)})`);
-      }
-    }
-  }, [formData]);
-
   // Position the entire group above the grid floor
   useEffect(() => {
     if (groupRef.current && formData) {
@@ -595,41 +598,50 @@ const TankModelWithAccessories = ({ formData, accessories, transparency, onAcces
       const floorY = Math.min(-8, -(height / 2) - 2);
       
       // Calculate leg height based on tank dimensions and orientation
-      let legHeight;
+      let legHeight = 0; // Default to 0 (no legs, tank on ground)
       let effectiveHeight = height; // Height for positioning calculation
       
-      if (formData.tankType === 'cylindrical') {
-        const diameterInMm = formData.diameter || 500;
-        const radius = (diameterInMm / 2) / 1000;
-        const bottomType = formData.bottomType || 'flat';
-        
-        // Calculate leg height based on bottom type
-        if (bottomType === 'cone') {
-          legHeight = radius * 1.2; // Taller legs for cone clearance
-        } else if (bottomType === 'dome') {
-          legHeight = radius * 1.2; // Same tall legs for dome clearance
+      // Only add leg height if legs are actually present
+      const numLegs = Number(formData.legs) || 0;
+      if (numLegs > 0) {
+        if (formData.tankType === 'cylindrical') {
+          const diameterInMm = formData.diameter || 500;
+          const radius = (diameterInMm / 2) / 1000;
+          const bottomType = formData.bottomType || 'flat';
+          
+          // Calculate leg height based on bottom type
+          if (bottomType === 'cone') {
+            legHeight = radius * 1.2; // Taller legs for cone clearance
+          } else if (bottomType === 'dome') {
+            legHeight = radius * 1.2; // Same tall legs for dome clearance
+          } else {
+            legHeight = radius * 0.6; // Standard legs for flat bottom
+          }
+          
+          // For horizontal orientation, effective height is the diameter
+          if (formData.orientation === 'horizontal') {
+            effectiveHeight = radius * 2; // diameter
+          }
         } else {
-          legHeight = radius * 0.6; // Standard legs for flat bottom
-        }
-        
-        // For horizontal orientation, effective height is the diameter
-        if (formData.orientation === 'horizontal') {
-          effectiveHeight = radius * 2; // diameter
-        }
-      } else {
-        const widthInMm = formData.width || 500;
-        const width = widthInMm / 1000;
-        legHeight = width * 0.6;
-        
-        // For horizontal orientation, effective height is the width
-        if (formData.orientation === 'horizontal') {
-          effectiveHeight = width;
+          const widthInMm = formData.width || 500;
+          const width = widthInMm / 1000;
+          legHeight = width * 0.6;
+          
+          // For horizontal orientation, effective height is the width
+          if (formData.orientation === 'horizontal') {
+            effectiveHeight = width;
+          }
         }
       }
       
-      // Position tank so the legs touch the floor
-      // Tank center should be at floor level + half effective height + leg height
-      groupRef.current.position.y = floorY + effectiveHeight / 2 + legHeight;
+      // Position tank - if no legs, tank sits directly on floor, otherwise elevated by leg height
+      if (numLegs === 0) {
+        // Tank sits on ground - position so bottom touches floor
+        groupRef.current.position.y = floorY + effectiveHeight / 2;
+      } else {
+        // Tank has legs - position so legs touch floor
+        groupRef.current.position.y = floorY + effectiveHeight / 2 + legHeight;
+      }
     }
   }, [formData]);
   
@@ -676,10 +688,12 @@ const TankModelWithAccessories = ({ formData, accessories, transparency, onAcces
         // Create the tank
         const tankObj = createCylindricalTank(radius, height, topType, bottomType, formData.material, transparency);
         
-        // Add legs - ensure we convert string to number
-        const numLegs = Number(formData.legs) || 4;
-        const isHorizontal = formData.orientation === 'horizontal';
-        tankObj.addLegs(numLegs, isHorizontal);
+        // Add legs only if numLegs > 0
+        const numLegs = Number(formData.legs) || 0;
+        if (numLegs > 0) {
+          const isHorizontal = formData.orientation === 'horizontal';
+          tankObj.addLegs(numLegs, isHorizontal);
+        }
         
         // Rotate tank if horizontal - only rotate the tank parts, legs are already positioned correctly
         if (formData.orientation === 'horizontal') {
@@ -706,10 +720,12 @@ const TankModelWithAccessories = ({ formData, accessories, transparency, onAcces
         // Create appropriate tank based on orientation
         const tankObj = createRectangularTank(width, height, depth, formData.material, transparency);
         
-        // Add legs - ensure we convert string to number
-        const numLegs = Number(formData.legs) || 4;
-        const isHorizontal = formData.orientation === 'horizontal';
-        tankObj.addLegs(numLegs, isHorizontal);
+        // Add legs only if numLegs > 0
+        const numLegs = Number(formData.legs) || 0;
+        if (numLegs > 0) {
+          const isHorizontal = formData.orientation === 'horizontal';
+          tankObj.addLegs(numLegs, isHorizontal);
+        }
         
         // For horizontal orientation, rotate only the tank parts, legs are already positioned correctly
         if (formData.orientation === 'horizontal') {
@@ -770,11 +786,17 @@ const TankModelWithAccessories = ({ formData, accessories, transparency, onAcces
       <group>
         {accessories.map((accessory) => {
           console.log('Rendering accessory:', accessory.id, accessory.type, 'at position:', accessory.position);
+          
+          // Get the accessory size setting from formData
+          const accessorySize = formData.accessorySize?.[accessory.type] || 'normal';
+          console.log(`Accessory ${accessory.type} size: ${accessorySize}, formData.accessorySize:`, formData.accessorySize);
+          
           return (
             <DraggableAccessory
               key={accessory.id}
               accessory={accessory}
               tankInfo={tankInfo}
+              accessorySize={accessorySize}
               onPositionChange={onAccessoryPositionChange}
               onDragStateChange={setGlobalDragging}
             />
@@ -820,6 +842,12 @@ const Tank3DPreview = ({ formData, transparency = 1.0 }: TankPreviewProps) => {
 
       Object.entries(formData.accessories).forEach(([type, isSelected]) => {
         console.log(`Accessory ${type}: ${isSelected}`);
+        
+        // Skip supportLegs - they are handled as part of the tank structure, not as separate accessories
+        if (type === 'supportLegs') {
+          return;
+        }
+        
         if (isSelected) {
           // Calculate default position based on tank dimensions and accessory type
           const heightInMm = formData.height || 1000;
@@ -851,9 +879,15 @@ const Tank3DPreview = ({ formData, transparency = 1.0 }: TankPreviewProps) => {
           
           // Calculate tank's actual lowest and highest points for proper accessory positioning
           const floorY = Math.min(-8, -(height / 2) - 2);
-          let legHeight = tankRadius * 0.6; // Default leg height
           
-          // Tank's actual lowest point is the bottom of the tank body (above legs)
+          // Check if tank has legs
+          const numLegs = Number(formData.legs) || 0;
+          let legHeight = 0;
+          if (numLegs > 0) {
+            legHeight = tankRadius * 0.6; // Default leg height only if legs exist
+          }
+          
+          // Tank's actual lowest point is either on the ground or above legs
           const tankLowestPoint = floorY + legHeight;
           
           // Tank's actual highest point depends on top type
@@ -869,14 +903,12 @@ const Tank3DPreview = ({ formData, transparency = 1.0 }: TankPreviewProps) => {
           // Position accessory at tank's mid-height (between lowest and highest points)
           const accessoryY = tankLowestPoint + (tankHighestPoint - tankLowestPoint) * 0.5;
           
-          console.log(`Tank bounds: lowest=${tankLowestPoint.toFixed(2)}, highest=${tankHighestPoint.toFixed(2)}, accessory Y=${accessoryY.toFixed(2)}`);
+          console.log(`Tank bounds: lowest=${tankLowestPoint.toFixed(2)}, highest=${tankHighestPoint.toFixed(2)}, accessory Y=${accessoryY.toFixed(2)}, legs=${numLegs}, legHeight=${legHeight.toFixed(2)}`);
           
           let defaultPosition: [number, number, number];
           
+          // Note: supportLegs is handled by the tank structure itself, not as separate accessories
           switch (type as AccessoryType) {
-            case 'supportLegs':
-              defaultPosition = [x, accessoryY, z]; // Tank surface level, beside tank
-              break;
             case 'thermalInsulation':
               defaultPosition = [x, accessoryY, z]; // Tank surface level, beside tank
               break;
@@ -891,6 +923,9 @@ const Tank3DPreview = ({ formData, transparency = 1.0 }: TankPreviewProps) => {
               break;
             case 'hatchesAndDrains':
               defaultPosition = [x, accessoryY, z]; // Tank surface level, beside tank
+              break;
+            default:
+              defaultPosition = [x, accessoryY, z]; // Default position for any other accessories
               break;
           }
 
