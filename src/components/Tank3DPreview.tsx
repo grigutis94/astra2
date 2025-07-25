@@ -284,9 +284,8 @@ const ErrorCube = () => {
 
 
 // Supaprastintas Draggable 3D Accessory komponentas
-const DraggableAccessory = ({ accessory, tankBounds, onPositionChange, onDragStateChange, tankInfo }: {
+const DraggableAccessory = ({ accessory, onPositionChange, onDragStateChange, tankInfo }: {
   accessory: AccessoryPosition;
-  tankBounds: { width: number; height: number; depth: number };
   onPositionChange: (id: string, position: [number, number, number]) => void;
   onDragStateChange: (isDragging: boolean) => void;
   tankInfo: { type: string; radius: number; height: number }; // Add tank info prop
@@ -362,32 +361,40 @@ const DraggableAccessory = ({ accessory, tankBounds, onPositionChange, onDragSta
         const currentPos = meshRef.current.position;
 
         // Surface-locked movement system: accessories move along tank surface
-        const sensitivity = 0.02;
+        const sensitivity = 0.01; // Reduced sensitivity for more controlled movement
         
         // Get tank information from props
         const tankRadius = tankInfo.radius;
         const tankType = tankInfo.type;
+        const tankHeight = tankInfo.height;
         
-        // Calculate new position based on mouse movement
-        const rawNewY = currentPos.y - deltaY * sensitivity; // Inverted for natural feel
+        // Calculate tank's actual vertical bounds (matching the positioning logic)
+        const floorY = Math.min(-8, -(tankHeight / 2) - 2);
+        const legHeight = tankRadius * 0.6;
+        const tankLowestPoint = floorY + legHeight;
+        const tankHighestPoint = tankLowestPoint + tankHeight;
+        
+        // Strictly constrain Y movement to tank's actual bounds with small buffer
+        const buffer = tankHeight * 0.1; // 10% buffer
+        const minY = tankLowestPoint + buffer;
+        const maxY = tankHighestPoint - buffer;
+        const constrainedY = Math.max(minY, Math.min(maxY, currentPos.y - deltaY * sensitivity));
         
         let newPosition: [number, number, number];
         
         if (tankType === 'cylindrical') {
           // For cylindrical tanks: project position onto cylinder surface
-          // Keep Y movement free (up/down along tank height)
-          // Project X,Z onto circular cross-section
-          
-          const targetDistance = tankRadius + 0.3; // Small offset from tank surface
+          // Keep accessory at fixed distance from tank center
+          const targetDistance = tankRadius + 0.2; // Fixed small offset from tank surface
           
           // Calculate angle for rotation around tank
           let angle = Math.atan2(currentPos.z, currentPos.x);
-          angle += deltaX * sensitivity * 2; // Rotate around tank with mouse X movement
+          angle += deltaX * sensitivity * 3; // Rotate around tank with mouse X movement
           
           const projectedX = Math.cos(angle) * targetDistance;
           const projectedZ = Math.sin(angle) * targetDistance;
           
-          newPosition = [projectedX, rawNewY, projectedZ];
+          newPosition = [projectedX, constrainedY, projectedZ];
         } else {
           // For rectangular tanks: project onto rectangular surface
           // Determine which face of the rectangle the accessory is closest to
@@ -397,30 +404,36 @@ const DraggableAccessory = ({ accessory, tankBounds, onPositionChange, onDragSta
           const distToBack = Math.abs(currentPos.z - tankRadius);
           
           const minDist = Math.min(distToLeft, distToRight, distToFront, distToBack);
+          const offset = 0.2; // Fixed small offset from tank surface
           
           if (minDist === distToLeft) {
-            // Left face
-            newPosition = [-tankRadius - 0.3, rawNewY, currentPos.z + deltaX * sensitivity];
+            // Left face - constrain to face, allow sliding along Z
+            const newZ = Math.max(-tankRadius + 0.1, Math.min(tankRadius - 0.1, currentPos.z + deltaX * sensitivity * 5));
+            newPosition = [-tankRadius - offset, constrainedY, newZ];
           } else if (minDist === distToRight) {
-            // Right face  
-            newPosition = [tankRadius + 0.3, rawNewY, currentPos.z + deltaX * sensitivity];
+            // Right face - constrain to face, allow sliding along Z
+            const newZ = Math.max(-tankRadius + 0.1, Math.min(tankRadius - 0.1, currentPos.z + deltaX * sensitivity * 5));
+            newPosition = [tankRadius + offset, constrainedY, newZ];
           } else if (minDist === distToFront) {
-            // Front face
-            newPosition = [currentPos.x + deltaX * sensitivity, rawNewY, -tankRadius - 0.3];
+            // Front face - constrain to face, allow sliding along X
+            const newX = Math.max(-tankRadius + 0.1, Math.min(tankRadius - 0.1, currentPos.x + deltaX * sensitivity * 5));
+            newPosition = [newX, constrainedY, -tankRadius - offset];
           } else {
-            // Back face
-            newPosition = [currentPos.x + deltaX * sensitivity, rawNewY, tankRadius + 0.3];
+            // Back face - constrain to face, allow sliding along X
+            const newX = Math.max(-tankRadius + 0.1, Math.min(tankRadius - 0.1, currentPos.x + deltaX * sensitivity * 5));
+            newPosition = [newX, constrainedY, tankRadius + offset];
           }
         }
 
-        // Allow full 3D movement with reasonable bounds
+        // Apply strict bounds based on tank's actual geometry
+        const maxDistance = tankRadius + 0.5; // Keep accessories close to tank surface
         const constrainedPosition: [number, number, number] = [
-          Math.max(-tankBounds.width/2, Math.min(tankBounds.width/2, newPosition[0])),
-          Math.max(-tankBounds.height/2, Math.min(tankBounds.height, newPosition[1])), // Allow movement from below floor to reasonable height
-          Math.max(-tankBounds.depth/2, Math.min(tankBounds.depth/2, newPosition[2]))
+          Math.max(-maxDistance, Math.min(maxDistance, newPosition[0])),
+          Math.max(minY, Math.min(maxY, newPosition[1])), // Use actual tank bounds for Y
+          Math.max(-maxDistance, Math.min(maxDistance, newPosition[2]))
         ];
 
-        console.log(`Constraining accessory position: original=[${newPosition[0].toFixed(2)}, ${newPosition[1].toFixed(2)}, ${newPosition[2].toFixed(2)}], constrained=[${constrainedPosition[0].toFixed(2)}, ${constrainedPosition[1].toFixed(2)}, ${constrainedPosition[2].toFixed(2)}], tankBounds=[${tankBounds.width.toFixed(2)}, ${tankBounds.height.toFixed(2)}, ${tankBounds.depth.toFixed(2)}]`);
+        console.log(`Surface-locked movement: Y constrained between ${minY.toFixed(2)} and ${maxY.toFixed(2)}, final position=[${constrainedPosition[0].toFixed(2)}, ${constrainedPosition[1].toFixed(2)}, ${constrainedPosition[2].toFixed(2)}]`);
 
         meshRef.current.position.set(...constrainedPosition);
         onPositionChange(accessory.id, constrainedPosition);
@@ -761,7 +774,6 @@ const TankModelWithAccessories = ({ formData, accessories, transparency, onAcces
             <DraggableAccessory
               key={accessory.id}
               accessory={accessory}
-              tankBounds={tankBounds}
               tankInfo={tankInfo}
               onPositionChange={onAccessoryPositionChange}
               onDragStateChange={setGlobalDragging}
@@ -837,14 +849,27 @@ const Tank3DPreview = ({ formData, transparency = 1.0 }: TankPreviewProps) => {
           
           console.log(`Accessory ${type} positioned at: x=${x.toFixed(2)}, z=${z.toFixed(2)}, distance=${accessoryDistance.toFixed(2)}, tankRadius=${tankRadius.toFixed(2)}`);
           
-          // Position accessories on the tank surface at mid-height
-          // Calculate tank center Y position (where the tank is positioned)
+          // Calculate tank's actual lowest and highest points for proper accessory positioning
           const floorY = Math.min(-8, -(height / 2) - 2);
           let legHeight = tankRadius * 0.6; // Default leg height
-          const tankCenterY = floorY + height / 2 + legHeight; // Tank center position
-          const accessoryY = tankCenterY; // Place accessory at tank center height (mid-tank)
           
-          console.log(`Tank center Y: ${tankCenterY.toFixed(2)}, placing accessory at Y=${accessoryY.toFixed(2)}`);
+          // Tank's actual lowest point is the bottom of the tank body (above legs)
+          const tankLowestPoint = floorY + legHeight;
+          
+          // Tank's actual highest point depends on top type
+          let tankHighestPoint = tankLowestPoint + height;
+          
+          // Adjust for different top types
+          if (formData.topType === 'dome') {
+            tankHighestPoint += tankRadius * 0.5; // Add dome height
+          } else if (formData.topType === 'cone') {
+            tankHighestPoint += tankRadius; // Add cone height
+          }
+          
+          // Position accessory at tank's mid-height (between lowest and highest points)
+          const accessoryY = tankLowestPoint + (tankHighestPoint - tankLowestPoint) * 0.5;
+          
+          console.log(`Tank bounds: lowest=${tankLowestPoint.toFixed(2)}, highest=${tankHighestPoint.toFixed(2)}, accessory Y=${accessoryY.toFixed(2)}`);
           
           let defaultPosition: [number, number, number];
           
