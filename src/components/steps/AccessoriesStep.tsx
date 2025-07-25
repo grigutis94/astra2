@@ -4,25 +4,35 @@ import { useTranslation } from '../../contexts/LanguageContext';
 import type { TankFormData } from '../../types/tankTypes';
 
 const AccessoriesStep = () => {
-  const { register, watch, setValue } = useFormContext<TankFormData>();
+  const { register, watch } = useFormContext<TankFormData>();
   const { t, tString } = useTranslation();
   
   const purpose = watch('purpose');
   const accessories = watch('accessories') || {};
 
-  // Initialize accessories if not set
+  // Debug accessories changes
   useEffect(() => {
-    if (!accessories || Object.keys(accessories).length === 0) {
-      setValue('accessories', {
-        supportLegs: false,
-        thermalInsulation: false,
-        cipSystem: false,
-        pressureRelief: false,
-        levelIndicators: false,
-        hatchesAndDrains: false,
-      });
-    }
-  }, [accessories, setValue]);
+    console.log('AccessoriesStep - accessories changed:', accessories);
+  }, [accessories]);
+
+  // Remove the initialization useEffect completely - let default values from TankConfigForm work
+  // useEffect(() => {
+  //   const currentAccessories = watch('accessories');
+  //   console.log('AccessoriesStep initialization check:', currentAccessories);
+  //   
+  //   // Only initialize if accessories is null/undefined (not if it's an object with false values)
+  //   if (!currentAccessories) {
+  //     console.log('Initializing accessories to false values');
+  //     setValue('accessories', {
+  //       supportLegs: false,
+  //       thermalInsulation: false,
+  //       cipSystem: false,
+  //       pressureRelief: false,
+  //       levelIndicators: false,
+  //       hatchesAndDrains: false,
+  //     });
+  //   }
+  // }, [setValue, watch]);
 
   // Helper function to get accessory info with translations
   const getAccessoryInfo = (accessoryKey: string) => {

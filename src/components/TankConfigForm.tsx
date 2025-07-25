@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import type { TankFormData, FormStep } from '../types/tankTypes';
 import FormStepper from './FormStepper';
@@ -99,6 +99,11 @@ const TankConfigForm = () => {
   };
 
   const formValues = methods.watch();
+  
+  // Debug: log form values changes
+  useEffect(() => {
+    console.log('Form values changed:', formValues);
+  }, [formValues]);
 
   return (
     <FormProvider {...methods}>
@@ -111,7 +116,7 @@ const TankConfigForm = () => {
                 <h1 className="text-4xl font-bold bg-gradient-to-r from-astra to-astra-soft bg-clip-text text-transparent mb-3">
                   Tank Configurator
                 </h1>
-                <p className="text-gray-600 dark:text-slate-400 text-lg">Professional tank design made simple</p>
+  
               </div>
               <ThemeToggle />
             </div>

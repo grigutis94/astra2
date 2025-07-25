@@ -284,11 +284,12 @@ const ErrorCube = () => {
 
 
 // Supaprastintas Draggable 3D Accessory komponentas
-const DraggableAccessory = ({ accessory, tankBounds, onPositionChange, onDragStateChange }: {
+const DraggableAccessory = ({ accessory, tankBounds, onPositionChange, onDragStateChange, tankInfo }: {
   accessory: AccessoryPosition;
   tankBounds: { width: number; height: number; depth: number };
   onPositionChange: (id: string, position: [number, number, number]) => void;
   onDragStateChange: (isDragging: boolean) => void;
+  tankInfo: { type: string; radius: number; height: number }; // Add tank info prop
 }) => {
   const meshRef = useRef<THREE.Mesh>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -298,19 +299,19 @@ const DraggableAccessory = ({ accessory, tankBounds, onPositionChange, onDragSta
   const createAccessoryGeometry = (type: AccessoryType) => {
     switch (type) {
       case 'supportLegs':
-        return <cylinderGeometry args={[0.05, 0.05, 0.5, 8]} />;
+        return <cylinderGeometry args={[0.1, 0.1, 1.0, 8]} />;
       case 'thermalInsulation':
-        return <boxGeometry args={[0.3, 0.8, 0.3]} />;
+        return <boxGeometry args={[0.6, 1.6, 0.6]} />;
       case 'cipSystem':
-        return <sphereGeometry args={[0.15, 16, 16]} />;
+        return <sphereGeometry args={[0.3, 16, 16]} />;
       case 'pressureRelief':
-        return <coneGeometry args={[0.1, 0.3, 8]} />;
+        return <coneGeometry args={[0.2, 0.6, 8]} />;
       case 'levelIndicators':
-        return <boxGeometry args={[0.1, 0.4, 0.1]} />;
+        return <boxGeometry args={[0.2, 0.8, 0.2]} />;
       case 'hatchesAndDrains':
-        return <cylinderGeometry args={[0.2, 0.2, 0.1, 16]} />;
+        return <cylinderGeometry args={[0.4, 0.4, 0.2, 16]} />;
       default:
-        return <boxGeometry args={[0.2, 0.2, 0.2]} />;
+        return <boxGeometry args={[0.4, 0.4, 0.4]} />;
     }
   };
 
@@ -360,20 +361,66 @@ const DraggableAccessory = ({ accessory, tankBounds, onPositionChange, onDragSta
         // Dabartinė objekto pozicija
         const currentPos = meshRef.current.position;
 
-        // Konvertuojame į 3D judėjimą su teisingomis kryptimis
-        const sensitivity = 0.01;
-        const newPosition: [number, number, number] = [
-          currentPos.x + deltaX * sensitivity,      // X ašis - šonai (teisingai)
-          currentPos.y - deltaY * sensitivity,      // Y ašis - aukštis (atvirkščiai nes screen Y atvirkščias)
-          currentPos.z                              // Z ašis - išlaikome nepakitusią
-        ];
+        // Surface-locked movement system: accessories move along tank surface
+        const sensitivity = 0.02;
+        
+        // Get tank information from props
+        const tankRadius = tankInfo.radius;
+        const tankType = tankInfo.type;
+        
+        // Calculate new position based on mouse movement
+        const rawNewY = currentPos.y - deltaY * sensitivity; // Inverted for natural feel
+        
+        let newPosition: [number, number, number];
+        
+        if (tankType === 'cylindrical') {
+          // For cylindrical tanks: project position onto cylinder surface
+          // Keep Y movement free (up/down along tank height)
+          // Project X,Z onto circular cross-section
+          
+          const targetDistance = tankRadius + 0.3; // Small offset from tank surface
+          
+          // Calculate angle for rotation around tank
+          let angle = Math.atan2(currentPos.z, currentPos.x);
+          angle += deltaX * sensitivity * 2; // Rotate around tank with mouse X movement
+          
+          const projectedX = Math.cos(angle) * targetDistance;
+          const projectedZ = Math.sin(angle) * targetDistance;
+          
+          newPosition = [projectedX, rawNewY, projectedZ];
+        } else {
+          // For rectangular tanks: project onto rectangular surface
+          // Determine which face of the rectangle the accessory is closest to
+          const distToLeft = Math.abs(currentPos.x + tankRadius);
+          const distToRight = Math.abs(currentPos.x - tankRadius);
+          const distToFront = Math.abs(currentPos.z + tankRadius);
+          const distToBack = Math.abs(currentPos.z - tankRadius);
+          
+          const minDist = Math.min(distToLeft, distToRight, distToFront, distToBack);
+          
+          if (minDist === distToLeft) {
+            // Left face
+            newPosition = [-tankRadius - 0.3, rawNewY, currentPos.z + deltaX * sensitivity];
+          } else if (minDist === distToRight) {
+            // Right face  
+            newPosition = [tankRadius + 0.3, rawNewY, currentPos.z + deltaX * sensitivity];
+          } else if (minDist === distToFront) {
+            // Front face
+            newPosition = [currentPos.x + deltaX * sensitivity, rawNewY, -tankRadius - 0.3];
+          } else {
+            // Back face
+            newPosition = [currentPos.x + deltaX * sensitivity, rawNewY, tankRadius + 0.3];
+          }
+        }
 
-        // Apribojame poziciją prie tanko ribų
+        // Allow full 3D movement with reasonable bounds
         const constrainedPosition: [number, number, number] = [
           Math.max(-tankBounds.width/2, Math.min(tankBounds.width/2, newPosition[0])),
-          Math.max(0, Math.min(tankBounds.height, newPosition[1])),
+          Math.max(-tankBounds.height/2, Math.min(tankBounds.height, newPosition[1])), // Allow movement from below floor to reasonable height
           Math.max(-tankBounds.depth/2, Math.min(tankBounds.depth/2, newPosition[2]))
         ];
+
+        console.log(`Constraining accessory position: original=[${newPosition[0].toFixed(2)}, ${newPosition[1].toFixed(2)}, ${newPosition[2].toFixed(2)}], constrained=[${constrainedPosition[0].toFixed(2)}, ${constrainedPosition[1].toFixed(2)}, ${constrainedPosition[2].toFixed(2)}], tankBounds=[${tankBounds.width.toFixed(2)}, ${tankBounds.height.toFixed(2)}, ${tankBounds.depth.toFixed(2)}]`);
 
         meshRef.current.position.set(...constrainedPosition);
         onPositionChange(accessory.id, constrainedPosition);
@@ -406,7 +453,6 @@ const DraggableAccessory = ({ accessory, tankBounds, onPositionChange, onDragSta
       position={accessory.position}
       rotation={accessory.rotation}
       onPointerDown={handleMouseDown}
-      // Pašalinu onPointerMove - dragging bus tik per global mouse events
       onPointerOver={() => {
         setHovered(true);
         if (!isDragging) {
@@ -433,14 +479,27 @@ const DraggableAccessory = ({ accessory, tankBounds, onPositionChange, onDragSta
       
       {/* Accessory label */}
       <Text
-        position={[0, 0.5, 0]}
-        fontSize={0.1}
+        position={[0, 1.0, 0]}
+        fontSize={0.2}
         color="white"
         anchorX="center"
         anchorY="middle"
       >
         {accessory.type}
       </Text>
+      
+      {/* Movement instructions when hovered */}
+      {hovered && (
+        <Text
+          position={[0, 1.4, 0]}
+          fontSize={0.15}
+          color="yellow"
+          anchorX="center"
+          anchorY="middle"
+        >
+          Drag to slide along tank surface
+        </Text>
+      )}
     </mesh>
   );
 };
@@ -456,13 +515,42 @@ const TankModelWithAccessories = ({ formData, accessories, transparency, onAcces
   const groupRef = useRef<THREE.Group>(null);
   const [hasError, setHasError] = useState(false);
   const [tankBounds, setTankBounds] = useState({ width: 2, height: 2, depth: 2 });
+  const [tankInfo, setTankInfo] = useState({ type: 'cylindrical', radius: 0.5, height: 1 });
+
+  // Debug: log accessories received by TankModelWithAccessories
+  useEffect(() => {
+    console.log('TankModelWithAccessories received accessories:', accessories);
+  }, [accessories]);
+
+  // Calculate tank info for surface-locked movement
+  useEffect(() => {
+    if (formData) {
+      const heightInMm = formData.height || 1000;
+      const height = heightInMm / 1000;
+      
+      let radius = 0.5;
+      if (formData.tankType === 'cylindrical') {
+        const diameterInMm = formData.diameter || 500;
+        radius = (diameterInMm / 1000) / 2;
+      } else if (formData.tankType === 'rectangular') {
+        const widthInMm = formData.width || 500;
+        radius = (widthInMm / 1000) / 2; // Use width/2 as "radius" for rectangular tanks
+      }
+      
+      setTankInfo({
+        type: formData.tankType || 'cylindrical',
+        radius: radius,
+        height: height
+      });
+    }
+  }, [formData]);
 
   // Function to control dragging state globally - now uses the callback from parent
   const setGlobalDragging = (dragging: boolean) => {
     onDragStateChange(dragging);
   };
 
-  // Calculate tank bounds for accessory constraints
+  // Calculate tank bounds for accessory constraints - expand beyond tank to allow accessories outside
   useEffect(() => {
     if (formData) {
       const heightInMm = formData.height || 1000;
@@ -471,11 +559,17 @@ const TankModelWithAccessories = ({ formData, accessories, transparency, onAcces
       if (formData.tankType === 'cylindrical') {
         const diameterInMm = formData.diameter || 500;
         const diameter = diameterInMm / 1000;
-        setTankBounds({ width: diameter, height, depth: diameter });
+        // Expand bounds significantly beyond tank to allow accessories to be positioned outside
+        const expandedSize = diameter * 3; // 3x tank diameter for movement area
+        setTankBounds({ width: expandedSize, height: height * 2, depth: expandedSize });
+        console.log(`Tank bounds set for cylindrical tank: width=${expandedSize.toFixed(2)}, height=${(height * 2).toFixed(2)}, depth=${expandedSize.toFixed(2)} (tank diameter: ${diameter.toFixed(2)})`);
       } else {
         const widthInMm = formData.width || 500;
         const width = widthInMm / 1000;
-        setTankBounds({ width, height, depth: width });
+        // Expand bounds significantly beyond tank to allow accessories to be positioned outside
+        const expandedSize = width * 3; // 3x tank width for movement area
+        setTankBounds({ width: expandedSize, height: height * 2, depth: expandedSize });
+        console.log(`Tank bounds set for rectangular tank: width=${expandedSize.toFixed(2)}, height=${(height * 2).toFixed(2)}, depth=${expandedSize.toFixed(2)} (tank width: ${width.toFixed(2)})`);
       }
     }
   }, [formData]);
@@ -653,18 +747,29 @@ const TankModelWithAccessories = ({ formData, accessories, transparency, onAcces
   });
   
   return hasError ? <ErrorCube /> : (
-    <group ref={groupRef}>
-      {/* Render accessories */}
-      {accessories.map((accessory) => (
-        <DraggableAccessory
-          key={accessory.id}
-          accessory={accessory}
-          tankBounds={tankBounds}
-          onPositionChange={onAccessoryPositionChange}
-          onDragStateChange={setGlobalDragging}
-        />
-      ))}
-    </group>
+    <>
+      {/* Tank group with rotation animations */}
+      <group ref={groupRef}>
+        {/* Tank is rendered here but accessories are moved outside */}
+      </group>
+      
+      {/* Accessories group - separate from tank so they don't rotate with it */}
+      <group>
+        {accessories.map((accessory) => {
+          console.log('Rendering accessory:', accessory.id, accessory.type, 'at position:', accessory.position);
+          return (
+            <DraggableAccessory
+              key={accessory.id}
+              accessory={accessory}
+              tankBounds={tankBounds}
+              tankInfo={tankInfo}
+              onPositionChange={onAccessoryPositionChange}
+              onDragStateChange={setGlobalDragging}
+            />
+          );
+        })}
+      </group>
+    </>
   );
 };
 
@@ -679,6 +784,11 @@ const Tank3DPreview = ({ formData, transparency = 1.0 }: TankPreviewProps) => {
   const [isDraggingAccessory, setIsDraggingAccessory] = useState(false);
   const orbitControlsRef = useRef<any>(null);
 
+  // Debug: log when Tank3DPreview receives new props
+  useEffect(() => {
+    console.log('Tank3DPreview received formData:', formData);
+  }, [formData]);
+
   // Handle global dragging state from accessories
   const handleGlobalDragStateChange = (isDragging: boolean) => {
     setIsDraggingAccessory(isDragging);
@@ -690,39 +800,76 @@ const Tank3DPreview = ({ formData, transparency = 1.0 }: TankPreviewProps) => {
 
   // Convert selected accessories from form to 3D accessories
   useEffect(() => {
+    console.log('useEffect triggered - formData.accessories:', formData.accessories);
+    
     if (formData.accessories) {
       const newAccessories: AccessoryPosition[] = [];
       let accessoryIndex = 0;
 
       Object.entries(formData.accessories).forEach(([type, isSelected]) => {
+        console.log(`Accessory ${type}: ${isSelected}`);
         if (isSelected) {
           // Calculate default position based on tank dimensions and accessory type
           const heightInMm = formData.height || 1000;
           const height = heightInMm / 1000;
           
-          let defaultPosition: [number, number, number] = [0, height / 2, 0];
+          // Calculate tank radius/width to position accessories outside the tank
+          let tankRadius = 0.5; // default radius
+          if (formData.tankType === 'cylindrical') {
+            const diameterInMm = formData.diameter || 500;
+            tankRadius = (diameterInMm / 1000) / 2;
+          } else if (formData.tankType === 'rectangular') {
+            const widthInMm = formData.width || 500;
+            tankRadius = (widthInMm / 1000) / 2;
+          }
           
-          // Position accessories based on their type
+          console.log(`Tank dimensions - type: ${formData.tankType}, radius: ${tankRadius}, height: ${height}`);
+          
+          // Position accessories close to the tank with minimal spacing
+          // Use a small distance to place them right next to the tank
+          const spacing = Math.max(tankRadius * 0.3, 0.2); // Just slightly outside the tank
+          const accessoryDistance = tankRadius + spacing;
+          
+          // Distribute accessories around the tank to avoid overlap
+          const angleOffset = (accessoryIndex * 60) * (Math.PI / 180); // 60 degrees apart
+          const x = Math.cos(angleOffset) * accessoryDistance;
+          const z = Math.sin(angleOffset) * accessoryDistance;
+          
+          console.log(`Accessory ${type} positioned at: x=${x.toFixed(2)}, z=${z.toFixed(2)}, distance=${accessoryDistance.toFixed(2)}, tankRadius=${tankRadius.toFixed(2)}`);
+          
+          // Position accessories on the tank surface at mid-height
+          // Calculate tank center Y position (where the tank is positioned)
+          const floorY = Math.min(-8, -(height / 2) - 2);
+          let legHeight = tankRadius * 0.6; // Default leg height
+          const tankCenterY = floorY + height / 2 + legHeight; // Tank center position
+          const accessoryY = tankCenterY; // Place accessory at tank center height (mid-tank)
+          
+          console.log(`Tank center Y: ${tankCenterY.toFixed(2)}, placing accessory at Y=${accessoryY.toFixed(2)}`);
+          
+          let defaultPosition: [number, number, number];
+          
           switch (type as AccessoryType) {
             case 'supportLegs':
-              defaultPosition = [0, -height / 4, 0];
+              defaultPosition = [x, accessoryY, z]; // Tank surface level, beside tank
               break;
             case 'thermalInsulation':
-              defaultPosition = [0, height / 4, 0];
+              defaultPosition = [x, accessoryY, z]; // Tank surface level, beside tank
               break;
             case 'cipSystem':
-              defaultPosition = [0, height * 0.8, 0];
+              defaultPosition = [x, accessoryY, z]; // Tank surface level, beside tank
               break;
             case 'pressureRelief':
-              defaultPosition = [0, height * 0.9, 0];
+              defaultPosition = [x, accessoryY, z]; // Tank surface level, beside tank
               break;
             case 'levelIndicators':
-              defaultPosition = [0, height * 0.6, 0];
+              defaultPosition = [x, accessoryY, z]; // Tank surface level, beside tank
               break;
             case 'hatchesAndDrains':
-              defaultPosition = [0, height * 0.1, 0];
+              defaultPosition = [x, accessoryY, z]; // Tank surface level, beside tank
               break;
           }
+
+          console.log(`Final position for ${type}: [${defaultPosition[0].toFixed(2)}, ${defaultPosition[1].toFixed(2)}, ${defaultPosition[2].toFixed(2)}]`);
 
           newAccessories.push({
             id: `${type}-${accessoryIndex++}`,
@@ -736,7 +883,7 @@ const Tank3DPreview = ({ formData, transparency = 1.0 }: TankPreviewProps) => {
       setAccessories(newAccessories);
       console.log('Generated accessories from form data:', newAccessories);
     }
-  }, [formData.accessories, formData.height, formData.tankType]);
+  }, [formData]);
 
   const handleAccessoryPositionChange = (id: string, position: [number, number, number]) => {
     setAccessories(prev => 
