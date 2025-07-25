@@ -20,3 +20,18 @@ declare module 'react-dom/client' {
   }
   export function createRoot(container: Element | DocumentFragment): Root;
 }
+
+// Vite configuration types
+declare module 'vite' {
+  export interface UserConfig {
+    plugins?: any[];
+    [key: string]: any;
+  }
+  export function defineConfig(config: UserConfig): UserConfig;
+  export * from 'vite/types';
+}
+
+declare module '@vitejs/plugin-react' {
+  const react: () => any;
+  export default react;
+}
