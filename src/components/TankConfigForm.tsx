@@ -5,6 +5,7 @@ import FormStepper from './FormStepper';
 import Button from './ui/Button';
 import Tank3DPreview from './Tank3DPreview';
 import ThemeToggle from './ThemeToggle';
+import { useTranslation } from '../contexts/LanguageContext';
 
 // Import new step components
 import PurposeStep from './steps/PurposeStep';
@@ -15,6 +16,7 @@ import SummaryStep from './steps/SummaryStep';
 
 const TankConfigForm = () => {
   const [currentStep, setCurrentStep] = useState(0);
+  const { t } = useTranslation();
   
   const methods = useForm<TankFormData>({
     defaultValues: {
@@ -55,11 +57,11 @@ const TankConfigForm = () => {
   });
   
   const steps: FormStep[] = [
-    { id: 'purpose', label: 'Paskirtis' },
-    { id: 'dimensions', label: 'Matmenys' },
-    { id: 'material', label: 'Medžiaga' },
-    { id: 'accessories', label: 'Priedai' },
-    { id: 'summary', label: 'Suvestinė' },
+    { id: 'purpose', label: t('stepper.step1') },
+    { id: 'dimensions', label: t('stepper.step2') },
+    { id: 'material', label: t('stepper.step3') },
+    { id: 'accessories', label: t('stepper.step4') },
+    { id: 'summary', label: t('stepper.step5') },
   ];
   
   const stepComponents = [
@@ -146,7 +148,7 @@ const TankConfigForm = () => {
                         onClick={goToPrevStep}
                         disabled={currentStep === 0}
                         className="px-6 py-3"
-                        label="Previous"
+                        label={t('common.previous')}
                       />
                       
                       <div className="flex items-center gap-3">
@@ -169,7 +171,7 @@ const TankConfigForm = () => {
                         type="button"
                         onClick={goToNextStep}
                         className="px-6 py-3"
-                        label={currentStep === steps.length - 1 ? 'Complete' : 'Next'}
+                        label={currentStep === steps.length - 1 ? t('common.finish') : t('common.next')}
                       />
                     </div>
                   </div>

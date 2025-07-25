@@ -1,9 +1,11 @@
 import { useFormContext } from 'react-hook-form';
 import { useEffect } from 'react';
+import { useTranslation } from '../../contexts/LanguageContext';
 import type { TankFormData } from '../../types/tankTypes';
 
 const MaterialStep = () => {
   const { register, formState: { errors }, watch, setValue } = useFormContext<TankFormData>();
+  const { t } = useTranslation();
   
   const purpose = watch('purpose');
   const material = watch('material');
@@ -13,38 +15,38 @@ const MaterialStep = () => {
   // Material options with detailed specifications
   const materialOptions = {
     '304': {
-      title: 'AISI 304',
-      description: 'Standard stainless steel, good corrosion resistance',
-      applications: ['Water storage', 'Food processing', 'General industrial'],
-      composition: '18% Chromium, 8% Nickel',
-      costLevel: 'Standard',
+      title: t('materialStep.materials.304.title'),
+      description: t('materialStep.materials.304.description'),
+      applications: t('materialStep.materials.304.applications'),
+      composition: t('materialStep.materials.304.composition'),
+      costLevel: t('materialStep.materials.304.costLevel'),
       color: 'from-gray-300 to-gray-400',
       recommended: ['water']
     },
     '316': {
-      title: 'AISI 316L',
-      description: 'Superior corrosion resistance, marine grade',
-      applications: ['Chemical processing', 'Marine environments', 'Pharmaceutical'],
-      composition: '18% Chromium, 10% Nickel, 2% Molybdenum',
-      costLevel: 'Premium',
+      title: t('materialStep.materials.316.title'),
+      description: t('materialStep.materials.316.description'),
+      applications: t('materialStep.materials.316.applications'),
+      composition: t('materialStep.materials.316.composition'),
+      costLevel: t('materialStep.materials.316.costLevel'),
       color: 'from-blue-300 to-blue-400',
       recommended: ['food', 'chemical']
     },
     'duplex': {
-      title: 'Duplex Steel',
-      description: 'High strength, excellent corrosion resistance',
-      applications: ['Aggressive chemicals', 'High-pressure applications'],
-      composition: 'Ferritic-Austenitic structure',
-      costLevel: 'High-end',
+      title: t('materialStep.materials.duplex.title'),
+      description: t('materialStep.materials.duplex.description'),
+      applications: t('materialStep.materials.duplex.applications'),
+      composition: t('materialStep.materials.duplex.composition'),
+      costLevel: t('materialStep.materials.duplex.costLevel'),
       color: 'from-purple-300 to-purple-400',
       recommended: ['chemical']
     },
     'alloy': {
-      title: 'Special Alloy',
-      description: 'Custom alloy for specific applications',
-      applications: ['Extreme conditions', 'Specialized chemicals'],
-      composition: 'Application-specific composition',
-      costLevel: 'Custom',
+      title: t('materialStep.materials.alloy.title'),
+      description: t('materialStep.materials.alloy.description'),
+      applications: t('materialStep.materials.alloy.applications'),
+      composition: t('materialStep.materials.alloy.composition'),
+      costLevel: t('materialStep.materials.alloy.costLevel'),
       color: 'from-yellow-300 to-yellow-400',
       recommended: ['chemical']
     }
@@ -54,39 +56,39 @@ const MaterialStep = () => {
   const surfaceOptions = {
     inner: {
       polished: {
-        title: 'Polished',
-        description: 'Mirror-like finish, easy to clean',
-        ra: '< 0.5 μm',
-        applications: ['Food grade', 'Pharmaceutical', 'High hygiene']
+        title: t('materialStep.surfaces.inner.polished.title'),
+        description: t('materialStep.surfaces.inner.polished.description'),
+        ra: t('materialStep.surfaces.inner.polished.ra'),
+        applications: t('materialStep.surfaces.inner.polished.applications')
       },
       standard: {
-        title: 'Standard',
-        description: 'Mill finish, cost-effective',
-        ra: '1.6 μm',
-        applications: ['Water storage', 'General industrial']
+        title: t('materialStep.surfaces.inner.standard.title'),
+        description: t('materialStep.surfaces.inner.standard.description'),
+        ra: t('materialStep.surfaces.inner.standard.ra'),
+        applications: t('materialStep.surfaces.inner.standard.applications')
       },
       brushed: {
-        title: 'Brushed',
-        description: 'Directional finish, good cleanability',
-        ra: '1.0 μm',
-        applications: ['Food processing', 'Chemical storage']
+        title: t('materialStep.surfaces.inner.brushed.title'),
+        description: t('materialStep.surfaces.inner.brushed.description'),
+        ra: t('materialStep.surfaces.inner.brushed.ra'),
+        applications: t('materialStep.surfaces.inner.brushed.applications')
       }
     },
     outer: {
       painted: {
-        title: 'Painted',
-        description: 'Protective coating, customizable color',
-        applications: ['Outdoor installations', 'Aesthetic requirements']
+        title: t('materialStep.surfaces.outer.painted.title'),
+        description: t('materialStep.surfaces.outer.painted.description'),
+        applications: t('materialStep.surfaces.outer.painted.applications')
       },
       galvanized: {
-        title: 'Galvanized',
-        description: 'Zinc coating for corrosion protection',
-        applications: ['Outdoor environments', 'Cost-effective protection']
+        title: t('materialStep.surfaces.outer.galvanized.title'),
+        description: t('materialStep.surfaces.outer.galvanized.description'),
+        applications: t('materialStep.surfaces.outer.galvanized.applications')
       },
       'bare-steel': {
-        title: 'Bare Steel',
-        description: 'Natural steel finish',
-        applications: ['Indoor installations', 'Budget-friendly']
+        title: t('materialStep.surfaces.outer.bare-steel.title'),
+        description: t('materialStep.surfaces.outer.bare-steel.description'),
+        applications: t('materialStep.surfaces.outer.bare-steel.applications')
       }
     }
   };
@@ -123,17 +125,17 @@ const MaterialStep = () => {
       {/* Header */}
       <div className="text-center">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-          Choose the construction material and surface treatment
+          {t('materialStep.title')}
         </h2>
         <p className="text-lg text-gray-600 dark:text-gray-300">
-          Material selection is automatically optimized for your {purpose ? `${purpose} application` : 'application'}
+          {t('materialStep.subtitle')}
         </p>
       </div>
 
       {/* Material Selection */}
       <div>
         <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
-          Construction Material
+          {t('materialStep.material')}
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {Object.entries(materialOptions).map(([key, option]) => {
@@ -154,7 +156,7 @@ const MaterialStep = () => {
                 <input
                   type="radio"
                   value={key}
-                  {...register('material', { required: 'Please select a material' })}
+                  {...register('material', { required: t('dimensionsStep.validation.selectMaterial') })}
                   className="sr-only"
                 />
                 
@@ -209,7 +211,7 @@ const MaterialStep = () => {
                     
                     <div className="pt-2 border-t border-gray-200 dark:border-gray-600">
                       <p className="text-xs text-gray-600 dark:text-gray-400">
-                        <span className="font-semibold">Applications:</span> {option.applications.join(', ')}
+                        <span className="font-semibold">Applications:</span> {option.applications}
                       </p>
                     </div>
                   </div>
@@ -228,7 +230,7 @@ const MaterialStep = () => {
         {/* Inner Surface */}
         <div>
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
-            Inner Surface Finish
+            {t('materialStep.innerSurface')}
           </h3>
           <div className="space-y-4">
             {Object.entries(surfaceOptions.inner).map(([key, option]) => (
@@ -243,7 +245,7 @@ const MaterialStep = () => {
                 <input
                   type="radio"
                   value={key}
-                  {...register('innerSurface', { required: 'Please select inner surface finish' })}
+                  {...register('innerSurface', { required: t('dimensionsStep.validation.selectInnerSurface') })}
                   className="sr-only"
                 />
                 <div className="flex items-start gap-3">
@@ -265,7 +267,7 @@ const MaterialStep = () => {
                       {option.description}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-500">
-                      {option.applications.join(', ')}
+                      {option.applications}
                     </p>
                   </div>
                 </div>
@@ -280,7 +282,7 @@ const MaterialStep = () => {
         {/* Outer Surface */}
         <div>
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
-            Outer Surface Treatment
+            {t('materialStep.outerSurface')}
           </h3>
           <div className="space-y-4">
             {Object.entries(surfaceOptions.outer).map(([key, option]) => (
@@ -295,7 +297,7 @@ const MaterialStep = () => {
                 <input
                   type="radio"
                   value={key}
-                  {...register('outerSurface', { required: 'Please select outer surface treatment' })}
+                  {...register('outerSurface', { required: t('dimensionsStep.validation.selectOuterSurface') })}
                   className="sr-only"
                 />
                 <div className="flex items-start gap-3">
@@ -312,7 +314,7 @@ const MaterialStep = () => {
                       {option.description}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-500">
-                      {option.applications.join(', ')}
+                      {option.applications}
                     </p>
                   </div>
                 </div>

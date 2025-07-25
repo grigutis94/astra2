@@ -1,0 +1,304 @@
+{
+  "common": {
+    "next": "Toliau",
+    "previous": "Atgal",
+    "finish": "Baigti",
+    "select": "Pasirinkti",
+    "cancel": "Atšaukti",
+    "save": "Išsaugoti",
+    "close": "Uždaryti",
+    "loading": "Kraunama...",
+    "error": "Klaida",
+    "success": "Sėkmingai",
+    "confirm": "Patvirtinti",
+    "volume": "Tūris",
+    "height": "Aukštis",
+    "width": "Plotis",
+    "diameter": "Skersmuo",
+    "thickness": "Storis",
+    "recommended": "Rekomenduojama",
+    "optional": "Neprivaloma",
+    "required": "Privaloma",
+    "current": "Aktyvus",
+    "completed": "baigta"
+  },
+  "navigation": {
+    "home": "Pradžia",
+    "configurator": "Konfigurator",
+    "about": "Apie mus",
+    "contact": "Kontaktai"
+  },
+  "header": {
+    "title": "ASTRA Talpyklų Konfigurator",
+    "subtitle": "Sukurkite idealią talpyklą savo poreikiams"
+  },
+  "stepper": {
+    "step1": "Paskirtis",
+    "step2": "Matmenys",
+    "step3": "Medžiagos",
+    "step4": "Priedai",
+    "step5": "Santrauka"
+  },
+  "purposeStep": {
+    "title": "Pasirinkite talpyklos paskirtį",
+    "subtitle": "Šis pasirinkimas padės nustatyti optimalias specifikacijas",
+    "water": {
+      "title": "Vandens saugojimas",
+      "description": "Geriamojo vandens, lietaus vandens ar techninio vandens saugojimas",
+      "features": [
+        "Maisto saugumui tinkamos medžiagos",
+        "Korozijos apsauga",
+        "Lengvai valomas paviršius"
+      ],
+      "notes": {
+        "0": "UV apsauga rekomenduojama lauko talpykloms",
+        "1": "Apsaugoti nuo dumblių augimo tinkamu sandarumu",
+        "2": "Patikrinti vandens kokybės standartų atitikimą"
+      },
+      "helperText": "Standartinis storis vandens saugojimui",
+      "recommendedMaterial": "Rekomenduojama medžiaga"
+    },
+    "food": {
+      "title": "Maisto pramonė",
+      "description": "Maisto produktų, gėrimų ar kitų vartojamų medžiagų saugojimas",
+      "features": [
+        "Higienos standartai",
+        "Nerūdijančio plieno paviršiai",
+        "FDA sertifikuotos medžiagos"
+      ],
+      "notes": [
+        "Reikalingi aukšti higienos standartai",
+        "Reguliarūs valymai ir dezinfekcija",
+        "Maisto saugos sertifikatų reikalavimai"
+      ],
+      "helperText": "Sustiprintas storis higienos reikalavimams",
+      "recommendedMaterial": "Rekomenduojama medžiaga"
+    },
+    "chemical": {
+      "title": "Cheminės medžiagos",
+      "description": "Pramonės cheminių medžiagų, degalų ar kitų specialių skysčių saugojimas",
+      "features": [
+        "Aukšta cheminė varža",
+        "Papildomi saugos elementai",
+        "Specialūs dangčiai ir vožtuvai"
+      ],
+      "notes": [
+        "Cheminė suderinamumas labai svarbus",
+        "Papildomi saugos vožtuvai ir avarinės sistemos",
+        "Specialūs dangčiai chemikaltų garų sulaikymui"
+      ],
+      "helperText": "Maksimalus storis cheminėms medžiagoms saugoti",
+      "recommendedMaterial": "Rekomenduojama medžiaga"
+    },
+    "autoConfig": "Automatiškai sukonfigūruotos specifikacijos pagal paskirtį",
+    "requirements": "reikalavimai"
+  },
+  "dimensionsStep": {
+    "title": "Įveskite pagrindinius talpyklos matmenis",
+    "subtitle": "Visi matmenys milimetrais (mm). Tūris bus automatiškai apskaičiuotas.",
+    "shape": "Talpyklos forma",
+    "orientation": "Orientacija",
+    "cylindrical": {
+      "title": "Cilindrinė",
+      "description": "Apvali talpykla su skersmeniu"
+    },
+    "rectangular": {
+      "title": "Stačiakampė",
+      "description": "Kvadratinė talpykla su pločiu"
+    },
+    "vertical": "Vertikali",
+    "horizontal": "Horizontali",
+    "dimensions": "Matmenys (mm)",
+    "wallThickness": "Sienelės storis (mm)",
+    "calculatedVolume": "Apskaičiuotas tūris",
+    "volumeCalculation": "Tūrio skaičiavimas:",
+    "formula": "Formulė:",
+    "wallThicknessDeduction": "Sienelės storio atskaitymas:",
+    "onAllSides": "iš visų pusių",
+    "innerDimensions": "vidiniai matmenys",
+    "innerDiameter": "Vidinis skersmuo",
+    "innerHeight": "Vidinis aukštis",
+    "innerWidth": "Vidinis plotis",
+    "showCalculation": "Rodyti skaičiavimą",
+    "hideCalculation": "Slėpti skaičiavimą",
+    "validation": {
+      "heightRequired": "Aukštis yra privalomas",
+      "heightMin": "Aukštis turi būti bent {{min}}mm",
+      "heightMax": "Aukštis negali viršyti {{max}}mm",
+      "diameterRequired": "Skersmuo yra privalomas",
+      "diameterMin": "Skersmuo turi būti bent {{min}}mm",
+      "diameterMax": "Skersmuo negali viršyti {{max}}mm",
+      "widthRequired": "Plotis yra privalomas",
+      "widthMin": "Plotis turi būti bent {{min}}mm",
+      "widthMax": "Plotis negali viršyti {{max}}mm",
+      "thicknessRequired": "Sienelės storis yra privalomas",
+      "thicknessMin": "Mažiausias {{min}}mm reikalingas {{purpose}} pritaikymui",
+      "thicknessMax": "Didžiausias {{max}}mm leidžiamas",
+      "selectType": "Pasirinkite talpyklos tipą",
+      "selectOrientation": "Pasirinkite talpyklos orientaciją",
+      "selectPurpose": "Pasirinkite paskirtį",
+      "selectMaterial": "Pasirinkite medžiagą",
+      "selectInnerSurface": "Pasirinkite vidinio paviršiaus apdailą",
+      "selectOuterSurface": "Pasirinkite išorinio paviršiaus apdorojimą"
+    },
+    "requirements": {
+      "water": {
+        "title": "Vandens saugojimas",
+        "description": "Standartinis storis tinkamas vandens saugojimo pritaikymams"
+      },
+      "food": {
+        "title": "Maisto ir gėrimų",
+        "description": "Sustiprintas storis higieniškiems maisto pritaikymams"
+      },
+      "chemical": {
+        "title": "Cheminių medžiagų saugojimas",
+        "description": "Sustiprintas storis cheminei varža ir saugumui"
+      }
+    }
+  },
+  "materialStep": {
+    "title": "Pasirinkite medžiagas ir paviršius",
+    "subtitle": "Rekomenduojamos medžiagos pagal talpyklos paskirtį",
+    "material": "Medžiaga",
+    "innerSurface": "Vidinio paviršiaus apdaila",
+    "outerSurface": "Išorinio paviršiaus apdaila",
+    "materials": {
+      "304": {
+        "title": "AISI 304",
+        "description": "Standartinis nerūdijantis plienas, gera korozijos atsparumas",
+        "composition": "18% chromo, 8% nikelio",
+        "costLevel": "Standartinis",
+        "applications": "Vandens saugojimas, Maisto perdirbimas, Bendras pramonės"
+      },
+      "316": {
+        "title": "AISI 316L",
+        "description": "Aukštesnė korozijos atsparumas, jūrinis klasės",
+        "composition": "18% chromo, 10% nikelio, 2% molibdenas",
+        "costLevel": "Aukščiausias",
+        "applications": "Cheminių medžiagų perdirbimas, Jūrų aplinkos, Farmacijos"
+      },
+      "duplex": {
+        "title": "Duplex plienas",
+        "description": "Aukštas stiprumas, puikus korozijos atsparumas",
+        "composition": "Feritinė-austenitinė struktūra",
+        "costLevel": "Aukštos klasės",
+        "applications": "Agresyvūs chemikalai, Aukšto spaudimo pritaikymai"
+      },
+      "alloy": {
+        "title": "Specialus lydinys",
+        "description": "Pritaikytas lydinys specifiniams taikymams",
+        "composition": "Taikymui pritaikyta sudėtis",
+        "costLevel": "Individuali",
+        "applications": "Ekstremalūs aplinkos, Specializuoti chemikalai"
+      }
+    },
+    "surfaces": {
+      "inner": {
+        "polished": {
+          "title": "Poliruotas",
+          "description": "Veidrodžio paviršius, lengvai valomas",
+          "ra": "< 0,5 μm",
+          "applications": "Maisto klasės, Farmacijos, Aukšta higiena"
+        },
+        "standard": {
+          "title": "Standartinis",
+          "description": "Gamyklinis paviršius, ekonomiškas",
+          "ra": "1,6 μm",
+          "applications": "Vandens saugojimas, Bendras pramonės"
+        },
+        "brushed": {
+          "title": "Šlifuotas",
+          "description": "Kryptingas paviršius, geras valomumas",
+          "ra": "1,0 μm",
+          "applications": "Maisto perdirbimas, Cheminė saugojimas"
+        }
+      },
+      "outer": {
+        "painted": {
+          "title": "Dažytas",
+          "description": "Apsauginis dengimas, pasirinktina spalva",
+          "applications": "Lauko instaliacijos, Estetiniai reikalavimai"
+        },
+        "galvanized": {
+          "title": "Cinkuotas",
+          "description": "Cinko dengimas korozijos apsaugai",
+          "applications": "Lauko aplinkos, Ekonomiška apsauga"
+        },
+        "bare-steel": {
+          "title": "Nuogas plienas",
+          "description": "Natūralus plieno paviršius",
+          "applications": "Vidaus instaliacijos, Biudžeto sprendimas"
+        }
+      }
+    },
+    "recommendations": {
+      "title": "Rekomenduojama jūsų pritaikymui",
+      "optimal": "✓ Optimalus",
+      "tooThin": "⚠ Per plonas",
+      "thick": "⚠ Storas (aukštesnė kaina)"
+    }
+  },
+  "accessoriesStep": {
+    "title": "Pasirinkite papildomus priedus",
+    "subtitle": "Rekomenduojami priedai pagal talpyklos paskirtį",
+    "recommended": "Rekomenduojama",
+    "accessories": {
+      "manhole": {
+        "title": "Įlaz",
+        "description": "Žmogaus patekimo anga"
+      },
+      "drain": {
+        "title": "Nuotekų vamzdis",
+        "description": "Talpyklos ištuštinimui"
+      },
+      "overflow": {
+        "title": "Perpildymo vamzdis",
+        "description": "Apsauga nuo perpildymo"
+      },
+      "vent": {
+        "title": "Ventiliacijos vožtuvas",
+        "description": "Spaudimo suvienodojimui"
+      },
+      "levelGauge": {
+        "title": "Lygio matuoklis",
+        "description": "Skysčio lygio stebėjimui"
+      },
+      "ladder": {
+        "title": "Kopėčios",
+        "description": "Saugus priėjimas prie talpyklos"
+      },
+      "insulation": {
+        "title": "Izoliacija",
+        "description": "Šiluminė izoliacija"
+      },
+      "heating": {
+        "title": "Šildymo elementas",
+        "description": "Turinio šildymui"
+      },
+      "agitator": {
+        "title": "Maišytuvas",
+        "description": "Turinio maišymui"
+      },
+      "coating": {
+        "title": "Apsauginis dangys",
+        "description": "Papildoma apsauga"
+      }
+    }
+  },
+  "summaryStep": {
+    "title": "Konfigūracijos santrauka",
+    "subtitle": "Peržiūrėkite savo talpyklos specifikacijas prieš užbaigiant",
+    "specifications": "Specifikacijos",
+    "materials": "Medžiagos",
+    "accessories": "Priedai",
+    "estimatedPrice": "Orientacinė kaina",
+    "downloadSpecification": "Atsisiųsti specifikaciją",
+    "requestQuote": "Prašyti kainos pasiūlymo",
+    "edit": "Redaguoti"
+  },
+  "errors": {
+    "required": "Šis laukas yra privalomas",
+    "invalidValue": "Neteisingas reikšmė",
+    "outOfRange": "Reikšmė už leistinų ribų"
+  }
+}

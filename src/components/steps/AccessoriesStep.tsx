@@ -1,9 +1,11 @@
 import { useFormContext } from 'react-hook-form';
 import { useEffect } from 'react';
+import { useTranslation } from '../../contexts/LanguageContext';
 import type { TankFormData } from '../../types/tankTypes';
 
 const AccessoriesStep = () => {
   const { register, watch, setValue } = useFormContext<TankFormData>();
+  const { t } = useTranslation();
   
   const purpose = watch('purpose');
   const accessories = watch('accessories') || {};
@@ -124,10 +126,10 @@ const AccessoriesStep = () => {
       {/* Header */}
       <div className="text-center">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-          Choose optional features
+          {t('accessoriesStep.title')}
         </h2>
         <p className="text-lg text-gray-600 dark:text-gray-300">
-          Select accessories to enhance your tank's functionality for {purpose ? `${purpose} applications` : 'your specific needs'}
+          {t('accessoriesStep.subtitle')}
         </p>
       </div>
 

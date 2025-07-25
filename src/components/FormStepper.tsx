@@ -1,4 +1,5 @@
 import type { FormStep } from '../types/tankTypes';
+import { useTranslation } from '../contexts/LanguageContext';
 
 interface FormStepperProps {
   steps: FormStep[];
@@ -7,6 +8,8 @@ interface FormStepperProps {
 }
 
 const FormStepper = ({ steps, currentStep, onStepClick }: FormStepperProps) => {
+  const { t } = useTranslation();
+  
   return (
     <div className="w-full">
       {/* Dark Themed Progress */}
@@ -53,7 +56,7 @@ const FormStepper = ({ steps, currentStep, onStepClick }: FormStepperProps) => {
                   {step.label}
                 </div>
                 {index === currentStep && (
-                  <div className="text-xs text-astra-soft mt-1 font-medium">Aktyvus</div>
+                  <div className="text-xs text-astra-soft mt-1 font-medium">{t('common.current')}</div>
                 )}
               </div>
             </div>
@@ -65,7 +68,7 @@ const FormStepper = ({ steps, currentStep, onStepClick }: FormStepperProps) => {
           <div className="flex items-center space-x-2">
             <div className="w-3 h-3 bg-astra-soft rounded-full"></div>
             <span className="text-gray-600 dark:text-gray-300">
-              {Math.round((currentStep / (steps.length - 1)) * 100)}% baigta
+              {Math.round((currentStep / (steps.length - 1)) * 100)}% {t('common.completed')}
             </span>
           </div>
           <span className="text-gray-500 dark:text-gray-400">{currentStep + 1} / {steps.length}</span>

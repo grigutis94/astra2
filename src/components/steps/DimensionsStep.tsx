@@ -1,10 +1,12 @@
 import { useFormContext } from 'react-hook-form';
 import { useEffect, useState } from 'react';
 import type { TankFormData } from '../../types/tankTypes';
+import { useTranslation } from '../../contexts/LanguageContext';
 
 const DimensionsStep = () => {
   const { register, formState: { errors }, watch, setValue } = useFormContext<TankFormData>();
   const [showVolumeCalculation, setShowVolumeCalculation] = useState(false);
+  const { t } = useTranslation();
   
   // Watch form values for automatic volume calculation and validation
   const purpose = watch('purpose');
@@ -61,17 +63,17 @@ const DimensionsStep = () => {
       {/* Header */}
       <div className="text-center">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-          Enter the main dimensions of your tank
+          {t('dimensionsStep.title')}
         </h2>
         <p className="text-lg text-gray-600 dark:text-gray-300">
-          All dimensions are in millimeters (mm). Volume will be calculated automatically.
+          {t('dimensionsStep.subtitle')}
         </p>
       </div>
 
       {/* Tank Type Selection */}
       <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-600">
         <label className="block text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          Tank Shape
+          {t('dimensionsStep.shape')}
         </label>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <label className={`cursor-pointer p-4 rounded-xl border-2 transition-all duration-200 ${
@@ -82,7 +84,7 @@ const DimensionsStep = () => {
             <input
               type="radio"
               value="cylindrical"
-              {...register('tankType', { required: 'Please select tank type' })}
+              {...register('tankType', { required: t('dimensionsStep.validation.selectType') })}
               className="sr-only"
             />
             <div className="text-center">
@@ -91,8 +93,8 @@ const DimensionsStep = () => {
                   <circle cx="12" cy="12" r="10" strokeWidth="2"/>
                 </svg>
               </div>
-              <h3 className="font-semibold text-gray-900 dark:text-white">Cylindrical</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Round tank with diameter</p>
+              <h3 className="font-semibold text-gray-900 dark:text-white">{t('dimensionsStep.cylindrical.title')}</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{t('dimensionsStep.cylindrical.description')}</p>
             </div>
           </label>
           
@@ -104,7 +106,7 @@ const DimensionsStep = () => {
             <input
               type="radio"
               value="rectangular"
-              {...register('tankType', { required: 'Please select tank type' })}
+              {...register('tankType', { required: t('dimensionsStep.validation.selectType') })}
               className="sr-only"
             />
             <div className="text-center">
@@ -113,13 +115,13 @@ const DimensionsStep = () => {
                   <rect x="3" y="3" width="18" height="18" rx="2" ry="2" strokeWidth="2"/>
                 </svg>
               </div>
-              <h3 className="font-semibold text-gray-900 dark:text-white">Rectangular</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Square tank with width</p>
+              <h3 className="font-semibold text-gray-900 dark:text-white">{t('dimensionsStep.rectangular.title')}</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{t('dimensionsStep.rectangular.description')}</p>
             </div>
           </label>
         </div>
         {errors.tankType && (
-          <p className="text-red-500 dark:text-red-400 text-sm mt-2">{errors.tankType.message}</p>
+          <p className="text-red-500 dark:text-red-400 text-sm mt-2">{t('dimensionsStep.validation.selectType')}</p>
         )}
       </div>
 
@@ -129,7 +131,7 @@ const DimensionsStep = () => {
           {/* Height */}
           <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-600">
             <label htmlFor="height" className="block text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              Height (mm)
+              {t('common.height')} (mm)
             </label>
             <input
               type="number"
@@ -138,9 +140,9 @@ const DimensionsStep = () => {
               max="20000"
               step="1"
               {...register('height', { 
-                required: 'Height is required',
-                min: { value: 100, message: 'Height must be at least 100mm' },
-                max: { value: 20000, message: 'Height cannot exceed 20,000mm' }
+                required: t('dimensionsStep.validation.heightRequired'),
+                min: { value: 100, message: t('dimensionsStep.validation.heightMin').replace('{{min}}', '100') },
+                max: { value: 20000, message: t('dimensionsStep.validation.heightMax').replace('{{max}}', '20,000') }
               })}
               className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-700 border-2 border-slate-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-astra focus:border-astra transition-all duration-200"
               placeholder="e.g. 2000"
@@ -154,7 +156,7 @@ const DimensionsStep = () => {
           {tankType === 'cylindrical' ? (
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-600">
               <label htmlFor="diameter" className="block text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Diameter (mm)
+                {t('common.diameter')} (mm)
               </label>
               <input
                 type="number"
@@ -163,9 +165,9 @@ const DimensionsStep = () => {
                 max="10000"
                 step="1"
                 {...register('diameter', { 
-                  required: 'Diameter is required',
-                  min: { value: 100, message: 'Diameter must be at least 100mm' },
-                  max: { value: 10000, message: 'Diameter cannot exceed 10,000mm' }
+                  required: t('dimensionsStep.validation.diameterRequired'),
+                  min: { value: 100, message: t('dimensionsStep.validation.diameterMin').replace('{{min}}', '100') },
+                  max: { value: 10000, message: t('dimensionsStep.validation.diameterMax').replace('{{max}}', '10,000') }
                 })}
                 className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-700 border-2 border-slate-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-astra focus:border-astra transition-all duration-200"
                 placeholder="e.g. 1000"
@@ -177,7 +179,7 @@ const DimensionsStep = () => {
           ) : (
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-600">
               <label htmlFor="width" className="block text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Width (mm)
+                {t('common.width')} (mm)
               </label>
               <input
                 type="number"
@@ -186,9 +188,9 @@ const DimensionsStep = () => {
                 max="10000"
                 step="1"
                 {...register('width', { 
-                  required: 'Width is required',
-                  min: { value: 100, message: 'Width must be at least 100mm' },
-                  max: { value: 10000, message: 'Width cannot exceed 10,000mm' }
+                  required: t('dimensionsStep.validation.widthRequired'),
+                  min: { value: 100, message: t('dimensionsStep.validation.widthMin').replace('{{min}}', '100') },
+                  max: { value: 10000, message: t('dimensionsStep.validation.widthMax').replace('{{max}}', '10,000') }
                 })}
                 className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-700 border-2 border-slate-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-astra focus:border-astra transition-all duration-200"
                 placeholder="e.g. 1000"
@@ -202,7 +204,7 @@ const DimensionsStep = () => {
           {/* Wall Thickness */}
           <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-600">
             <label htmlFor="wallThickness" className="block text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              Wall Thickness (mm)
+              {t('dimensionsStep.wallThickness')}
             </label>
             <input
               type="number"
@@ -211,14 +213,17 @@ const DimensionsStep = () => {
               max={currentRequirements?.maxThickness || 50}
               step="0.1"
               {...register('wallThickness', { 
-                required: 'Wall thickness is required',
+                required: t('dimensionsStep.validation.thicknessRequired'),
                 min: { 
                   value: currentRequirements?.minThickness || 1, 
-                  message: `Minimum ${currentRequirements?.minThickness || 1}mm required for ${purpose || 'this'} application` 
+                  message: t('dimensionsStep.validation.thicknessMin')
+                    .replace('{{min}}', String(currentRequirements?.minThickness || 1))
+                    .replace('{{purpose}}', purpose || 'this')
                 },
                 max: { 
                   value: currentRequirements?.maxThickness || 50, 
-                  message: `Maximum ${currentRequirements?.maxThickness || 50}mm allowed` 
+                  message: t('dimensionsStep.validation.thicknessMax')
+                    .replace('{{max}}', String(currentRequirements?.maxThickness || 50))
                 }
               })}
               className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-700 border-2 border-slate-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-astra focus:border-astra transition-all duration-200"
@@ -226,7 +231,7 @@ const DimensionsStep = () => {
             />
             {currentRequirements && (
               <p className="text-xs text-astra mt-2">
-                Recommended range for {purpose}: {currentRequirements.minThickness}-{currentRequirements.maxThickness}mm
+                {t('common.recommended')} {purpose}: {currentRequirements.minThickness}-{currentRequirements.maxThickness}mm
               </p>
             )}
             {errors.wallThickness && (
@@ -242,13 +247,13 @@ const DimensionsStep = () => {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                Calculated Volume
+                {t('dimensionsStep.calculatedVolume')}
               </h3>
               <p className="text-3xl font-bold text-astra">
                 {currentVolume.toFixed(3)} m³
               </p>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                = {(currentVolume * 1000).toFixed(0)} liters
+                = {(currentVolume * 1000).toFixed(0)} {t('common.volume').toLowerCase()}
               </p>
             </div>
             <button
@@ -256,7 +261,7 @@ const DimensionsStep = () => {
               onClick={() => setShowVolumeCalculation(!showVolumeCalculation)}
               className="text-sm text-astra hover:text-astra-dark transition-colors duration-200 flex items-center gap-2"
             >
-              {showVolumeCalculation ? 'Hide' : 'Show'} calculation
+              {showVolumeCalculation ? t('dimensionsStep.hideCalculation') : t('dimensionsStep.showCalculation')}
               <svg className={`w-4 h-4 transition-transform duration-200 ${showVolumeCalculation ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
               </svg>
@@ -265,37 +270,37 @@ const DimensionsStep = () => {
           
           {showVolumeCalculation && (
             <div className="mt-6 pt-6 border-t border-astra/20">
-              <h4 className="font-semibold text-gray-900 dark:text-white mb-3">Volume Calculation:</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white mb-3">{t('dimensionsStep.volumeCalculation')}</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                 <div className="space-y-2">
                   <p className="text-gray-600 dark:text-gray-400">
-                    <span className="font-medium">Formula:</span>{' '}
+                    <span className="font-medium">{t('dimensionsStep.formula')}</span>{' '}
                     {tankType === 'cylindrical' 
-                      ? 'π × r² × h (inner dimensions)' 
-                      : 'w × h × d (inner dimensions)'
+                      ? 'π × r² × h (' + t('dimensionsStep.innerDimensions') + ')' 
+                      : 'w × h × d (' + t('dimensionsStep.innerDimensions') + ')'
                     }
                   </p>
                   <p className="text-gray-600 dark:text-gray-400">
-                    <span className="font-medium">Wall thickness deduction:</span> {wallThickness}mm on all sides
+                    <span className="font-medium">{t('dimensionsStep.wallThicknessDeduction')}</span> {wallThickness}mm {t('dimensionsStep.onAllSides')}
                   </p>
                 </div>
                 <div className="space-y-2">
                   {tankType === 'cylindrical' ? (
                     <>
                       <p className="text-gray-600 dark:text-gray-400">
-                        Inner diameter: {diameter && wallThickness ? (diameter - wallThickness * 2).toFixed(1) : 0}mm
+                        {t('dimensionsStep.innerDiameter')}: {diameter && wallThickness ? (diameter - wallThickness * 2).toFixed(1) : 0}mm
                       </p>
                       <p className="text-gray-600 dark:text-gray-400">
-                        Inner height: {height && wallThickness ? (height - wallThickness * 2).toFixed(1) : 0}mm
+                        {t('dimensionsStep.innerHeight')}: {height && wallThickness ? (height - wallThickness * 2).toFixed(1) : 0}mm
                       </p>
                     </>
                   ) : (
                     <>
                       <p className="text-gray-600 dark:text-gray-400">
-                        Inner width: {width && wallThickness ? (width - wallThickness * 2).toFixed(1) : 0}mm
+                        {t('dimensionsStep.innerWidth')}: {width && wallThickness ? (width - wallThickness * 2).toFixed(1) : 0}mm
                       </p>
                       <p className="text-gray-600 dark:text-gray-400">
-                        Inner height: {height && wallThickness ? (height - wallThickness * 2).toFixed(1) : 0}mm
+                        {t('dimensionsStep.innerHeight')}: {height && wallThickness ? (height - wallThickness * 2).toFixed(1) : 0}mm
                       </p>
                     </>
                   )}

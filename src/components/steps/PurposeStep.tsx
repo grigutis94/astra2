@@ -1,6 +1,6 @@
 import { useFormContext } from 'react-hook-form';
 import { useEffect } from 'react';
-import { useTheme } from '../../contexts/ThemeContext';
+import { useTranslation } from '../../contexts/LanguageContext';
 import type { TankFormData } from '../../types/tankTypes';
 
 type PurposeKey = 'water' | 'food' | 'chemical';
@@ -63,7 +63,7 @@ const purposeRequirements: Record<PurposeKey, PurposeRequirement> = {
 
 const PurposeStep = () => {
   const { register, setValue, watch, formState: { errors } } = useFormContext<TankFormData>();
-  const { theme } = useTheme();
+  const { t } = useTranslation();
   const purpose = watch('purpose');
 
   // Auto-adjust parameters when purpose changes
@@ -87,10 +87,10 @@ const PurposeStep = () => {
       {/* Header */}
       <div className="text-center">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-          What is the intended use of the tank?
+          {t('purposeStep.title')}
         </h2>
         <p className="text-lg text-gray-600 dark:text-gray-300">
-          Choose the primary purpose to automatically configure optimal specifications
+          {t('purposeStep.subtitle')}
         </p>
       </div>
 
@@ -108,7 +108,7 @@ const PurposeStep = () => {
             <input
               type="radio"
               value={key}
-              {...register('purpose', { required: 'Please select a purpose' })}
+              {...register('purpose', { required: t('dimensionsStep.validation.selectPurpose') })}
               className="sr-only"
             />
             
@@ -130,10 +130,10 @@ const PurposeStep = () => {
               <div className="text-center mb-6">
                 <div className="text-5xl mb-4">{requirement.emoji}</div>
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                  {requirement.title}
+                  {t(`purposeStep.${key}.title`)}
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
-                  {requirement.description}
+                  {t(`purposeStep.${key}.description`)}
                 </p>
               </div>
               
@@ -160,27 +160,31 @@ const PurposeStep = () => {
             <div className="text-2xl">{purposeRequirements[purpose].emoji}</div>
             <div>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                {purposeRequirements[purpose].title} Requirements
+                {t(`purposeStep.${purpose}.title`)} {t('purposeStep.requirements')}
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Automatic configuration applied
+                {t('purposeStep.autoConfig')}
               </p>
             </div>
           </div>
 
           {/* Detailed recommendations */}
           <div className="space-y-4">
-            {purposeRequirements[purpose].notes.map((note, index) => (
-              <p key={index} className="text-sm text-gray-600 dark:text-gray-400">
-                - {note}
-              </p>
-            ))}
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              - {t(`purposeStep.${purpose}.notes.0`)}
+            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              - {t(`purposeStep.${purpose}.notes.1`)}
+            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              - {t(`purposeStep.${purpose}.notes.2`)}
+            </p>
             <p className="text-sm font-semibold text-gray-900 dark:text-white">
-              {purposeRequirements[purpose].helperText}
+              {t(`purposeStep.${purpose}.helperText`)}
             </p>
             {/* Recommended Material */}
             <p className="text-sm font-semibold text-gray-900 dark:text-white">
-              Recommended Material: {purposeRequirements[purpose].defaultMaterial}
+              {t(`purposeStep.${purpose}.recommendedMaterial`)}: {purposeRequirements[purpose].defaultMaterial}
             </p>
           </div>
         </div>

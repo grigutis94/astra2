@@ -1,0 +1,249 @@
+{
+  "common": {
+    "next": "Next",
+    "previous": "Previous",
+    "finish": "Finish",
+    "select": "Select",
+    "cancel": "Cancel",
+    "save": "Save",
+    "close": "Close",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "confirm": "Confirm",
+    "volume": "Volume",
+    "height": "Height",
+    "width": "Width",
+    "diameter": "Diameter",
+    "thickness": "Thickness",
+    "recommended": "Recommended",
+    "optional": "Optional",
+    "required": "Required",
+    "current": "Current",
+    "completed": "completed"
+  },
+  "navigation": {
+    "home": "Home",
+    "configurator": "Configurator",
+    "about": "About",
+    "contact": "Contact"
+  },
+  "header": {
+    "title": "ASTRA Tank Configurator",
+    "subtitle": "Design the perfect tank for your needs"
+  },
+  "stepper": {
+    "step1": "Purpose",
+    "step2": "Dimensions",
+    "step3": "Materials",
+    "step4": "Accessories",
+    "step5": "Summary"
+  },
+  "purposeStep": {
+    "title": "Select tank purpose",
+    "subtitle": "This choice will help determine optimal specifications",
+    "water": {
+      "title": "Water storage",
+      "description": "Drinking water, rainwater or technical water storage",
+      "features": [
+        "Food-safe materials",
+        "Corrosion protection",
+        "Easy maintenance"
+      ]
+    },
+    "food": {
+      "title": "Food and beverages",
+      "description": "Storage for food industry applications",
+      "features": [
+        "Hygienic design",
+        "Easy cleaning",
+        "FDA compliant materials"
+      ]
+    },
+    "chemical": {
+      "title": "Chemical storage",
+      "description": "Industrial chemicals and aggressive substances",
+      "features": [
+        "Chemical resistance",
+        "Safety standards",
+        "Specialized coatings"
+      ]
+    }
+  },
+  "dimensionsStep": {
+    "title": "Set tank dimensions",
+    "subtitle": "Enter desired dimensions or capacity",
+    "inputType": "Input method",
+    "byVolume": "By volume",
+    "byDimensions": "By dimensions",
+    "capacity": "Capacity (L)",
+    "volume": "Volume",
+    "diameter": "Diameter (mm)",
+    "height": "Height (mm)",
+    "calculated": "Calculated values",
+    "thickness": {
+      "title": "Wall thickness",
+      "subtitle": "Recommended thickness based on your application",
+      "water": {
+        "title": "Water and beverages",
+        "description": "Standard thickness for hygienic water applications"
+      },
+      "chemical": {
+        "title": "Chemical storage",
+        "description": "Reinforced thickness for chemical resistance and safety"
+      }
+    }
+  },
+  "materialStep": {
+    "title": "Select materials and surfaces",
+    "subtitle": "Recommended materials based on tank purpose",
+    "material": "Material",
+    "innerSurface": "Inner Surface Finish",
+    "outerSurface": "Outer Surface Treatment",
+    "materials": {
+      "304": {
+        "title": "AISI 304",
+        "description": "Standard stainless steel, good corrosion resistance",
+        "composition": "18% Chromium, 8% Nickel",
+        "costLevel": "Standard",
+        "applications": "Water storage, Food processing, General industrial"
+      },
+      "316": {
+        "title": "AISI 316L",
+        "description": "Superior corrosion resistance, marine grade",
+        "composition": "18% Chromium, 10% Nickel, 2% Molybdenum",
+        "costLevel": "Premium",
+        "applications": "Chemical processing, Marine environments, Pharmaceutical"
+      },
+      "duplex": {
+        "title": "Duplex Steel",
+        "description": "High strength, excellent corrosion resistance",
+        "composition": "Ferritic-Austenitic structure",
+        "costLevel": "High-grade",
+        "applications": "Aggressive chemicals, High-pressure applications"
+      },
+      "alloy": {
+        "title": "Special Alloy",
+        "description": "Custom alloy for specific applications",
+        "composition": "Application-specific composition",
+        "costLevel": "Custom",
+        "applications": "Extreme conditions, Specialized chemicals"
+      }
+    },
+    "surfaces": {
+      "inner": {
+        "polished": {
+          "title": "Polished",
+          "description": "Mirror finish, easy to clean",
+          "ra": "< 0.5 μm",
+          "applications": "Food grade, Pharmaceutical, High hygiene"
+        },
+        "standard": {
+          "title": "Standard",
+          "description": "Standard industrial finish, economical",
+          "ra": "1.6 μm",
+          "applications": "Water storage, General industrial"
+        },
+        "brushed": {
+          "title": "Brushed",
+          "description": "Directional finish, good cleanability",
+          "ra": "1.0 μm",
+          "applications": "Food processing, Chemical storage"
+        }
+      },
+      "outer": {
+        "painted": {
+          "title": "Painted",
+          "description": "Corrosion protection and aesthetics",
+          "applications": "Outdoor installations, Aesthetic requirements"
+        },
+        "galvanized": {
+          "title": "Galvanized",
+          "description": "Zinc coating for corrosion protection",
+          "applications": "Outdoor environments, Cost-effective protection"
+        },
+        "bare-steel": {
+          "title": "Bare Steel",
+          "description": "Natural steel finish",
+          "applications": "Indoor installations, Budget-friendly"
+        }
+      }
+    },
+    "recommendations": {
+      "title": "Recommended for your application",
+      "optimal": "✓ Optimal",
+      "tooThin": "⚠ Too thin",
+      "thick": "⚠ Thick (higher cost)"
+    }
+  },
+  "accessoriesStep": {
+    "title": "Select additional accessories",
+    "subtitle": "Recommended accessories based on tank purpose",
+    "recommended": "Recommended",
+    "accessories": {
+      "manhole": {
+        "title": "Manhole",
+        "description": "Human access opening"
+      },
+      "drain": {
+        "title": "Drain pipe",
+        "description": "For tank emptying"
+      },
+      "overflow": {
+        "title": "Overflow pipe",
+        "description": "Overflow protection"
+      },
+      "vent": {
+        "title": "Vent valve",
+        "description": "For pressure equalization"
+      },
+      "levelGauge": {
+        "title": "Level gauge",
+        "description": "For liquid level monitoring"
+      },
+      "ladder": {
+        "title": "Ladder",
+        "description": "Safe access to tank"
+      },
+      "insulation": {
+        "title": "Insulation",
+        "description": "Thermal insulation"
+      },
+      "heating": {
+        "title": "Heating element",
+        "description": "For temperature maintenance"
+      },
+      "agitator": {
+        "title": "Agitator",
+        "description": "For liquid mixing"
+      },
+      "cleaningNozzle": {
+        "title": "Cleaning nozzle",
+        "description": "For automated cleaning"
+      }
+    }
+  },
+  "summaryStep": {
+    "title": "Configuration Summary",
+    "subtitle": "Review and confirm your tank specifications",
+    "overview": "Overview",
+    "specifications": "Specifications",
+    "materials": "Materials & Surfaces",
+    "accessories": "Accessories",
+    "estimatedPrice": "Estimated Price",
+    "requestQuote": "Request Quote",
+    "downloadSpec": "Download Specification",
+    "modifyConfig": "Modify Configuration"
+  },
+  "validation": {
+    "required": "This field is required",
+    "mustBeNumber": "Must be a number",
+    "mustBePositive": "Must be positive",
+    "volumeTooSmall": "Minimum volume is 10L",
+    "volumeTooLarge": "Maximum volume is 100,000L",
+    "diameterTooSmall": "Minimum diameter is 300mm",
+    "diameterTooLarge": "Maximum diameter is 3000mm",
+    "heightTooSmall": "Minimum height is 500mm",
+    "heightTooLarge": "Maximum height is 8000mm"
+  }
+}
