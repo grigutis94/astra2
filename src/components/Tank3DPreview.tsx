@@ -375,8 +375,8 @@ const DraggableAccessory = ({ accessory, onPositionChange, onDragStateChange, ta
         // Dabartinė objekto pozicija
         const currentPos = meshRef.current.position;
 
-        // Surface-locked movement system: accessories move along tank surface
-        const sensitivity = 0.001; // Reduced sensitivity for smoother movement
+        // Surface-locked movement system with improved directional control
+        const sensitivity = 0.002; // Slightly increased for better responsiveness
         
         // Get tank information from props
         const tankRadius = tankInfo.radius;
@@ -397,56 +397,100 @@ const DraggableAccessory = ({ accessory, onPositionChange, onDragStateChange, ta
         const tankLowestPoint = floorY + legHeight;
         const tankHighestPoint = tankLowestPoint + tankHeight;
         
+        // Determine primary movement direction to avoid mixed movements
+        const absDeltaX = Math.abs(deltaX);
+        const absDeltaY = Math.abs(deltaY);
+        const threshold = 5; // Minimum delta to register movement
+        
+        // If movement is too small, ignore it
+        if (absDeltaX < threshold && absDeltaY < threshold) {
+          return;
+        }
+        
+        // Determine if this is primarily vertical or horizontal movement
+        const isVerticalMovement = absDeltaY > absDeltaX * 1.5; // Prefer vertical if Y is significantly larger
+        const isHorizontalMovement = absDeltaX > absDeltaY * 1.5; // Prefer horizontal if X is significantly larger
+        
         // Strictly constrain Y movement to tank's actual bounds with small buffer
         const buffer = tankHeight * 0.1; // 10% buffer
         const minY = tankLowestPoint + buffer;
         const maxY = tankHighestPoint - buffer;
-        const constrainedY = Math.max(minY, Math.min(maxY, currentPos.y - deltaY * sensitivity));
         
         let newPosition: [number, number, number];
         
-        if (tankType === 'cylindrical') {
-          // For cylindrical tanks: project position onto cylinder surface
-          // Keep accessory at fixed distance from tank center
-          const targetDistance = tankRadius + 0.2; // Fixed small offset from tank surface
+        if (isVerticalMovement) {
+          // Pure vertical movement - only change Y coordinate
+          const constrainedY = Math.max(minY, Math.min(maxY, currentPos.y - deltaY * sensitivity));
+          newPosition = [currentPos.x, constrainedY, currentPos.z];
+          console.log(`Vertical movement: deltaY=${deltaY.toFixed(2)} -> Y=${constrainedY.toFixed(2)}`);
+        } else if (isHorizontalMovement) {
+          // Pure horizontal movement - rotate around tank or move horizontally for rectangular
+          const constrainedY = Math.max(minY, Math.min(maxY, currentPos.y)); // Keep current Y
           
-          // Calculate angle for rotation around tank
-          let angle = Math.atan2(currentPos.z, currentPos.x);
-          // Fixed: + deltaX for intuitive movement (drag right = rotate clockwise)
-          angle += deltaX * sensitivity * 2; // Rotate around tank with mouse X movement
-          
-          const projectedX = Math.cos(angle) * targetDistance;
-          const projectedZ = Math.sin(angle) * targetDistance;
-          
-          newPosition = [projectedX, constrainedY, projectedZ];
-        } else {
-          // For rectangular tanks: simplified intuitive movement
-          // Allow free movement around the rectangular perimeter
-          // Use deltaX for horizontal movement, deltaY for vertical movement
-          
-          // Get current distance from tank center for maintaining offset
-          const currentDistance = Math.sqrt(currentPos.x * currentPos.x + currentPos.z * currentPos.z);
-          const targetDistance = tankRadius + 0.2; // Maintain fixed offset from tank
-          
-          // Calculate new position based on mouse movement
-          let newX = currentPos.x - deltaX * sensitivity * 8; // Fixed: + deltaX for intuitive left/right movement
-          let newZ = currentPos.z + deltaY * sensitivity * 8; // Fixed: - deltaY for intuitive forward/back movement
-          
-          // Ensure we maintain the offset distance from tank center
-          const newDistance = Math.sqrt(newX * newX + newZ * newZ);
-          if (newDistance > 0) {
-            const scale = targetDistance / newDistance;
-            newX *= scale;
-            newZ *= scale;
+          if (tankType === 'cylindrical') {
+            // For cylindrical tanks: rotate around tank
+            const targetDistance = tankRadius + 0.2;
+            let angle = Math.atan2(currentPos.z, currentPos.x);
+            angle += deltaX * sensitivity * 2; // Rotate based on X movement
+            
+            const projectedX = Math.cos(angle) * targetDistance;
+            const projectedZ = Math.sin(angle) * targetDistance;
+            
+            newPosition = [projectedX, constrainedY, projectedZ];
+            console.log(`Horizontal rotation: deltaX=${deltaX.toFixed(2)} -> angle=${angle.toFixed(2)}`);
+          } else {
+            // For rectangular tanks: move around perimeter
+            const targetDistance = tankRadius + 0.2;
+            let newX = currentPos.x + deltaX * sensitivity * 8;
+            let newZ = currentPos.z;
+            
+            // Maintain distance from tank center
+            const newDistance = Math.sqrt(newX * newX + newZ * newZ);
+            if (newDistance > 0) {
+              const scale = targetDistance / newDistance;
+              newX *= scale;
+              newZ *= scale;
+            }
+            
+            // Ensure accessory stays within bounds
+            const maxCoord = tankRadius + 0.5;
+            newX = Math.max(-maxCoord, Math.min(maxCoord, newX));
+            
+            newPosition = [newX, constrainedY, newZ];
+            console.log(`Horizontal movement: deltaX=${deltaX.toFixed(2)} -> X=${newX.toFixed(2)}`);
           }
+        } else {
+          // Mixed movement - use the previous behavior but with reduced sensitivity
+          const constrainedY = Math.max(minY, Math.min(maxY, currentPos.y - deltaY * sensitivity * 0.5));
           
-          // Ensure accessory stays within reasonable bounds
-          const maxCoord = tankRadius + 0.5;
-          newX = Math.max(-maxCoord, Math.min(maxCoord, newX));
-          newZ = Math.max(-maxCoord, Math.min(maxCoord, newZ));
-          
-          newPosition = [newX, constrainedY, newZ];
-          console.log(`Rectangular tank - Free movement: deltaX=${deltaX.toFixed(2)}, deltaY=${deltaY.toFixed(2)} -> pos=[${newX.toFixed(2)}, ${constrainedY.toFixed(2)}, ${newZ.toFixed(2)}] (fixed direction)`);
+          if (tankType === 'cylindrical') {
+            const targetDistance = tankRadius + 0.2;
+            let angle = Math.atan2(currentPos.z, currentPos.x);
+            angle += deltaX * sensitivity; // Reduced sensitivity for mixed movement
+            
+            const projectedX = Math.cos(angle) * targetDistance;
+            const projectedZ = Math.sin(angle) * targetDistance;
+            
+            newPosition = [projectedX, constrainedY, projectedZ];
+          } else {
+            const targetDistance = tankRadius + 0.2;
+            let newX = currentPos.x + deltaX * sensitivity * 4; // Reduced multiplier
+            let newZ = currentPos.z - deltaY * sensitivity * 4; // Reduced multiplier
+            
+            const newDistance = Math.sqrt(newX * newX + newZ * newZ);
+            if (newDistance > 0) {
+              const scale = targetDistance / newDistance;
+              newX *= scale;
+              newZ *= scale;
+            }
+            
+            const maxCoord = tankRadius + 0.5;
+            newX = Math.max(-maxCoord, Math.min(maxCoord, newX));
+            newZ = Math.max(-maxCoord, Math.min(maxCoord, newZ));
+            
+            newPosition = [newX, constrainedY, newZ];
+          }
+          console.log(`Mixed movement: deltaX=${deltaX.toFixed(2)}, deltaY=${deltaY.toFixed(2)}`);
         }
 
         // Apply strict bounds based on tank's actual geometry
