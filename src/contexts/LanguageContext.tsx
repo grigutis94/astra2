@@ -6,7 +6,7 @@ export type Language = 'lt' | 'en' | 'ru';
 interface LanguageContextType {
   language: Language;
   setLanguage: (language: Language) => void;
-  t: (key: string) => string;
+  t: (key: string) => string | string[];
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -43,7 +43,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   }, [language]);
 
   // Translation function
-  const t = (key: string): string => {
+  const t = (key: string): string | string[] => {
     const keys = key.split('.');
     let value: any = translations[language];
     
@@ -64,7 +64,14 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
       }
     }
     
-    return typeof value === 'string' ? value : key;
+    // Return array if it's an array, string if it's a string, or key if not found
+    if (Array.isArray(value)) {
+      return value;
+    } else if (typeof value === 'string') {
+      return value;
+    } else {
+      return key;
+    }
   };
 
   const contextValue: LanguageContextType = {

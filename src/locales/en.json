@@ -22,6 +22,19 @@
     "current": "Current",
     "completed": "completed"
   },
+  "preview": {
+    "title": "3D Preview",
+    "volume": "Volume",
+    "material": "Material",
+    "transparency": {
+      "title": "Transparency",
+      "label": "Tank Transparency",
+      "opaque": "Opaque",
+      "transparent": "Transparent",
+      "percentage": "% transparency",
+      "description": "Adjust transparency to better view the tank's internal structure and details"
+    }
+  },
   "navigation": {
     "home": "Home",
     "configurator": "Configurator",
@@ -180,47 +193,113 @@
     "title": "Select additional accessories",
     "subtitle": "Recommended accessories based on tank purpose",
     "recommended": "Recommended",
+    "optional": "Optional",
+    "estimatedCost": "Estimated Cost",
+    "technical": "Technical Information",
+    "benefits": "Benefits",
+    "applications": "Applications",
     "accessories": {
-      "manhole": {
-        "title": "Manhole",
-        "description": "Human access opening"
+      "supportLegs": {
+        "title": "Support Legs / Stand",
+        "description": "Structural support system to elevate the tank",
+        "benefits": [
+          "Improved drainage",
+          "Easy maintenance access",
+          "Better stability"
+        ],
+        "applications": [
+          "All tank types",
+          "Outdoor installations"
+        ],
+        "technical": "Height-adjustable legs with anchor bolts"
       },
-      "drain": {
-        "title": "Drain pipe",
-        "description": "For tank emptying"
+      "thermalInsulation": {
+        "title": "Thermal Insulation",
+        "description": "Insulation jacket to maintain temperature and prevent condensation",
+        "benefits": [
+          "Temperature control",
+          "Energy efficiency",
+          "Condensation prevention"
+        ],
+        "applications": [
+          "Temperature-sensitive storage",
+          "Outdoor installations"
+        ],
+        "technical": "Polyurethane foam or mineral wool with protective cladding"
       },
-      "overflow": {
-        "title": "Overflow pipe",
-        "description": "Overflow protection"
+      "cipSystem": {
+        "title": "CIP (Clean-In-Place) System",
+        "description": "Automated cleaning system with spray balls and nozzles",
+        "benefits": [
+          "Automated cleaning",
+          "Hygienic standards",
+          "Reduced downtime"
+        ],
+        "applications": [
+          "Food processing",
+          "Pharmaceutical",
+          "Dairy"
+        ],
+        "technical": "Rotating spray heads with controlled flow rates"
       },
-      "vent": {
-        "title": "Vent valve",
-        "description": "For pressure equalization"
+      "pressureRelief": {
+        "title": "Pressure Relief / Venting",
+        "description": "Safety valves and venting systems for pressure management",
+        "benefits": [
+          "Safety compliance",
+          "Pressure control",
+          "Vacuum prevention"
+        ],
+        "applications": [
+          "Pressurized systems",
+          "Chemical storage",
+          "Safety-critical applications"
+        ],
+        "technical": "Pressure relief valves, vacuum breakers, and flame arresters"
       },
-      "levelGauge": {
-        "title": "Level gauge",
-        "description": "For liquid level monitoring"
+      "levelIndicators": {
+        "title": "Liquid Level Indicators",
+        "description": "Visual and electronic level monitoring systems",
+        "benefits": [
+          "Real-time monitoring",
+          "Inventory management",
+          "Overflow prevention"
+        ],
+        "applications": [
+          "Process monitoring",
+          "Automated systems",
+          "Inventory control"
+        ],
+        "technical": "Ultrasonic sensors, sight glasses, or float gauges"
       },
-      "ladder": {
-        "title": "Ladder",
-        "description": "Safe access to tank"
-      },
-      "insulation": {
-        "title": "Insulation",
-        "description": "Thermal insulation"
-      },
-      "heating": {
-        "title": "Heating element",
-        "description": "For temperature maintenance"
-      },
-      "agitator": {
-        "title": "Agitator",
-        "description": "For liquid mixing"
-      },
-      "cleaningNozzle": {
-        "title": "Cleaning nozzle",
-        "description": "For automated cleaning"
+      "hatchesAndDrains": {
+        "title": "Hatches, Clamps, Drains",
+        "description": "Access hatches, drain valves, and connection fittings",
+        "benefits": [
+          "Easy access",
+          "Complete drainage",
+          "Maintenance convenience"
+        ],
+        "applications": [
+          "All tank applications",
+          "Maintenance requirements"
+        ],
+        "technical": "Manways, tri-clamp connections, and sloped drain outlets"
       }
+    },
+    "costLevels": {
+      "None": "None",
+      "Low": "Low",
+      "Low-Medium": "Low-Medium",
+      "Medium": "Medium",
+      "High": "High"
+    },
+    "summary": {
+      "title": "Selected Accessories",
+      "selectedCount": "accessories selected",
+      "totalCost": "Total Estimated Cost",
+      "noAccessories": "No accessories selected",
+      "noAccessoriesDescription": "You can add accessories to enhance your tank's functionality"
     }
   },
   "summaryStep": {

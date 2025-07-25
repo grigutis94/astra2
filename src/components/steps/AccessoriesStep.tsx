@@ -24,72 +24,54 @@ const AccessoriesStep = () => {
     }
   }, [accessories, setValue]);
 
-  // Accessory options with detailed information
-  const accessoryOptions = {
-    supportLegs: {
-      title: 'Support Legs / Stand',
-      description: 'Structural support system to elevate the tank',
-      icon: '🦵',
-      benefits: ['Improved drainage', 'Easy maintenance access', 'Better stability'],
-      applications: ['All tank types', 'Outdoor installations'],
-      estimatedCost: 'Low',
-      recommended: ['water', 'food', 'chemical'], // Recommended for all
-      technical: 'Height-adjustable legs with anchor bolts'
-    },
-    thermalInsulation: {
-      title: 'Thermal Insulation',
-      description: 'Insulation jacket to maintain temperature and prevent condensation',
-      icon: '🌡️',
-      benefits: ['Temperature control', 'Energy efficiency', 'Condensation prevention'],
-      applications: ['Temperature-sensitive storage', 'Outdoor installations'],
-      estimatedCost: 'Medium',
-      recommended: ['food', 'chemical'],
-      technical: 'Polyurethane foam or mineral wool with protective cladding'
-    },
-    cipSystem: {
-      title: 'CIP (Clean-In-Place) System',
-      description: 'Automated cleaning system with spray balls and nozzles',
-      icon: '🫧',
-      benefits: ['Automated cleaning', 'Hygienic standards', 'Reduced downtime'],
-      applications: ['Food processing', 'Pharmaceutical', 'Dairy'],
-      estimatedCost: 'High',
-      recommended: ['food'],
-      technical: 'Rotating spray heads with controlled flow rates'
-    },
-    pressureRelief: {
-      title: 'Pressure Relief / Venting',
-      description: 'Safety valves and venting systems for pressure management',
-      icon: '💨',
-      benefits: ['Safety compliance', 'Pressure control', 'Vacuum prevention'],
-      applications: ['Pressurized systems', 'Chemical storage', 'Safety-critical applications'],
-      estimatedCost: 'Medium',
-      recommended: ['chemical'],
-      technical: 'Pressure relief valves, vacuum breakers, and flame arresters'
-    },
-    levelIndicators: {
-      title: 'Liquid Level Indicators',
-      description: 'Visual and electronic level monitoring systems',
-      icon: '📏',
-      benefits: ['Real-time monitoring', 'Inventory management', 'Overflow prevention'],
-      applications: ['Process monitoring', 'Automated systems', 'Inventory control'],
-      estimatedCost: 'Medium',
-      recommended: ['water', 'food', 'chemical'], // Useful for all
-      technical: 'Ultrasonic sensors, sight glasses, or float gauges'
-    },
-    hatchesAndDrains: {
-      title: 'Hatches, Clamps, Drains',
-      description: 'Access hatches, drain valves, and connection fittings',
-      icon: '🚪',
-      benefits: ['Easy access', 'Complete drainage', 'Maintenance convenience'],
-      applications: ['All tank applications', 'Maintenance requirements'],
-      estimatedCost: 'Low-Medium',
-      recommended: ['water', 'food', 'chemical'], // Essential for all
-      technical: 'Manways, tri-clamp connections, and sloped drain outlets'
-    },
+  // Helper function to get accessory info with translations
+  const getAccessoryInfo = (accessoryKey: string) => {
+    const icons: { [key: string]: string } = {
+      supportLegs: '🦵',
+      thermalInsulation: '🌡️',
+      cipSystem: '🫧',
+      pressureRelief: '💨',
+      levelIndicators: '📏',
+      hatchesAndDrains: '🚪',
+    };
+
+    const costs: { [key: string]: string } = {
+      supportLegs: 'Low',
+      thermalInsulation: 'Medium',
+      cipSystem: 'High',
+      pressureRelief: 'Medium',
+      levelIndicators: 'Medium',
+      hatchesAndDrains: 'Low-Medium',
+    };
+
+    const recommended: { [key: string]: string[] } = {
+      supportLegs: ['water', 'food', 'chemical'],
+      thermalInsulation: ['food', 'chemical'],
+      cipSystem: ['food'],
+      pressureRelief: ['chemical'],
+      levelIndicators: ['water', 'food', 'chemical'],
+      hatchesAndDrains: ['water', 'food', 'chemical'],
+    };
+
+    const benefits = t(`accessoriesStep.accessories.${accessoryKey}.benefits`);
+    const applications = t(`accessoriesStep.accessories.${accessoryKey}.applications`);
+
+    return {
+      title: t(`accessoriesStep.accessories.${accessoryKey}.title`) as string,
+      description: t(`accessoriesStep.accessories.${accessoryKey}.description`) as string,
+      icon: icons[accessoryKey] || '📦',
+      benefits: Array.isArray(benefits) ? benefits : [benefits as string],
+      applications: Array.isArray(applications) ? applications : [applications as string],
+      estimatedCost: costs[accessoryKey] || 'Medium',
+      recommended: recommended[accessoryKey] || [],
+      technical: t(`accessoriesStep.accessories.${accessoryKey}.technical`) as string
+    };
   };
 
+  const accessoryKeys = ['supportLegs', 'thermalInsulation', 'cipSystem', 'pressureRelief', 'levelIndicators', 'hatchesAndDrains'];
+
   const getRecommendationLevel = (accessoryKey: string) => {
-    const accessoryInfo = accessoryOptions[accessoryKey as keyof typeof accessoryOptions];
+    const accessoryInfo = getAccessoryInfo(accessoryKey);
     if (purpose && accessoryInfo.recommended.includes(purpose)) {
       return 'highly-recommended';
     }
@@ -102,7 +84,7 @@ const AccessoriesStep = () => {
     let count = 0;
 
     selectedAccessories.forEach(([key, _]) => {
-      const accessory = accessoryOptions[key as keyof typeof accessoryOptions];
+      const accessory = getAccessoryInfo(key);
       if (accessory) {
         switch (accessory.estimatedCost) {
           case 'Low': totalCostLevel += 1; break;
@@ -114,11 +96,11 @@ const AccessoriesStep = () => {
       }
     });
 
-    if (count === 0) return 'None';
+    if (count === 0) return t('accessoriesStep.costLevels.None');
     const avgCost = totalCostLevel / count;
-    if (avgCost <= 1.2) return 'Low';
-    if (avgCost <= 2) return 'Medium';
-    return 'High';
+    if (avgCost <= 1.2) return t('accessoriesStep.costLevels.Low');
+    if (avgCost <= 2) return t('accessoriesStep.costLevels.Medium');
+    return t('accessoriesStep.costLevels.High');
   };
 
   return (
@@ -135,7 +117,8 @@ const AccessoriesStep = () => {
 
       {/* Accessories Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {Object.entries(accessoryOptions).map(([key, option]) => {
+        {accessoryKeys.map((key) => {
+          const option = getAccessoryInfo(key);
           const recommendationLevel = getRecommendationLevel(key);
           const isRecommended = recommendationLevel === 'highly-recommended';
           const isSelected = accessories[key as keyof typeof accessories];
@@ -168,7 +151,7 @@ const AccessoriesStep = () => {
                 <div className="absolute top-3 right-3 flex gap-2">
                   {isRecommended && (
                     <div className="px-2 py-1 bg-green-500 text-white text-xs font-semibold rounded-full">
-                      Recommended
+                      {t('accessoriesStep.recommended')}
                     </div>
                   )}
                   <div className={`px-2 py-1 text-xs font-semibold rounded-full ${
@@ -178,7 +161,7 @@ const AccessoriesStep = () => {
                       ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
                       : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
                   }`}>
-                    {option.estimatedCost}
+                    {t(`accessoriesStep.costLevels.${option.estimatedCost}`)}
                   </div>
                 </div>
                 
@@ -208,7 +191,7 @@ const AccessoriesStep = () => {
                   
                   {/* Benefits */}
                   <div className="space-y-2">
-                    <h4 className="text-sm font-semibold text-astra">Key Benefits:</h4>
+                    <h4 className="text-sm font-semibold text-astra">{t('accessoriesStep.benefits')}:</h4>
                     <ul className="space-y-1">
                       {option.benefits.map((benefit, index) => (
                         <li key={index} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400">
@@ -222,7 +205,7 @@ const AccessoriesStep = () => {
                   {/* Technical Info */}
                   <div className="pt-3 border-t border-gray-200 dark:border-gray-600">
                     <p className="text-xs text-gray-500 dark:text-gray-500">
-                      <span className="font-semibold">Technical:</span> {option.technical}
+                      <span className="font-semibold">{t('accessoriesStep.technical')}:</span> {option.technical}
                     </p>
                   </div>
                 </div>
@@ -238,18 +221,18 @@ const AccessoriesStep = () => {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                Selected Accessories
+                {t('accessoriesStep.summary.title')}
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                {Object.values(accessories).filter(Boolean).length} accessories selected
+                {Object.values(accessories).filter(Boolean).length} {t('accessoriesStep.summary.selectedCount')}
               </p>
             </div>
             <div className="text-right">
-              <p className="text-sm text-gray-600 dark:text-gray-400">Estimated Cost Level</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{t('accessoriesStep.summary.totalCost')}</p>
               <p className={`text-lg font-bold ${
-                getEstimatedCostForSelection() === 'Low' 
+                getEstimatedCostForSelection() === t('accessoriesStep.costLevels.Low')
                   ? 'text-green-600 dark:text-green-400'
-                  : getEstimatedCostForSelection() === 'Medium'
+                  : getEstimatedCostForSelection() === t('accessoriesStep.costLevels.Medium')
                   ? 'text-yellow-600 dark:text-yellow-400'
                   : 'text-red-600 dark:text-red-400'
               }`}>
@@ -260,7 +243,7 @@ const AccessoriesStep = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {Object.entries(accessories).filter(([_, selected]) => selected).map(([key, _]) => {
-              const option = accessoryOptions[key as keyof typeof accessoryOptions];
+              const option = getAccessoryInfo(key);
               return (
                 <div key={key} className="flex items-center gap-3 p-3 bg-white/50 dark:bg-gray-800/50 rounded-lg">
                   <div className="text-2xl">{option.icon}</div>
@@ -269,7 +252,7 @@ const AccessoriesStep = () => {
                       {option.title}
                     </p>
                     <p className="text-xs text-gray-600 dark:text-gray-400">
-                      {option.estimatedCost} cost
+                      {t(`accessoriesStep.costLevels.${option.estimatedCost}`)} {t('accessoriesStep.estimatedCost').toLowerCase()}
                     </p>
                   </div>
                 </div>
@@ -282,8 +265,8 @@ const AccessoriesStep = () => {
       {/* No accessories selected message */}
       {accessories && !Object.values(accessories).some(Boolean) && (
         <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-          <p className="text-lg">No accessories selected</p>
-          <p className="text-sm">You can add accessories to enhance your tank's functionality</p>
+          <p className="text-lg">{t('accessoriesStep.summary.noAccessories')}</p>
+          <p className="text-sm">{t('accessoriesStep.summary.noAccessoriesDescription')}</p>
         </div>
       )}
     </div>

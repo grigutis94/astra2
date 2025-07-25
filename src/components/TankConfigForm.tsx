@@ -187,44 +187,76 @@ const TankConfigForm = () => {
               {/* Quick Stats */}
               <div className="mt-6 grid grid-cols-2 gap-4">
                 <div className="bg-white dark:bg-gray-800 rounded-xl p-4 text-center border border-gray-200 dark:border-gray-600">
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">Volume</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">{t('preview.volume')}</p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
                     {formValues.volume ? formValues.volume.toFixed(2) : '0.00'} m³
                   </p>
                 </div>
                 <div className="bg-white dark:bg-gray-800 rounded-xl p-4 text-center border border-gray-200 dark:border-gray-600">
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">Material</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">{t('preview.material')}</p>
                   <p className="text-lg font-bold text-gray-900 dark:text-white">
-                    {formValues.material ? `AISI ${formValues.material}` : 'Not selected'}
+                    {formValues.material ? `AISI ${formValues.material}` : t('common.select')}
                   </p>
                 </div>
               </div>
               
               {/* Transparency Control */}
-              <div className="mt-4 bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
-                <div className="flex items-center justify-between mb-3">
-                  <p className="text-sm font-semibold text-gray-900 dark:text-white">Talpos skaidrumas</p>
-                  <span className="text-sm font-medium text-astra">
-                    {Math.round((1 - tankTransparency) * 100)}% skaidrumas
-                  </span>
+              <div className="mt-4 bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-600 shadow-sm">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"></div>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white">{t('preview.transparency.label')}</p>
+                  </div>
+                  <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
+                    <div className="w-2 h-2 bg-astra rounded-full animate-pulse"></div>
+                    <span className="text-sm font-medium text-astra">
+                      {Math.round((1 - tankTransparency) * 100)}{t('preview.transparency.percentage')}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-xs text-gray-600 dark:text-gray-400">Nepermatomas</span>
-                  <input
-                    type="range"
-                    min="0"
-                    max="90"
-                    step="10"
-                    value={Math.round((1 - tankTransparency) * 100)}
-                    onChange={(e) => setTankTransparency(1 - (parseFloat(e.target.value) / 100))}
-                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 
-                               [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 
-                               [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-astra 
-                               [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md
-                               [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full 
-                               [&::-moz-range-thumb]:bg-astra [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-0"
-                  />
-                  <span className="text-xs text-gray-600 dark:text-gray-400">Skaidrus</span>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-4">
+                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400 w-20 text-center">
+                      {t('preview.transparency.opaque')}
+                    </span>
+                    <div className="flex-1 relative">
+                      <input
+                        type="range"
+                        min="0"
+                        max="90"
+                        step="5"
+                        value={Math.round((1 - tankTransparency) * 100)}
+                        onChange={(e) => setTankTransparency(1 - (parseFloat(e.target.value) / 100))}
+                        className="w-full h-3 bg-gradient-to-r from-gray-300 via-blue-200 to-blue-400 rounded-lg appearance-none cursor-pointer
+                                   dark:from-gray-600 dark:via-blue-800 dark:to-blue-600
+                                   [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 
+                                   [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white 
+                                   [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-lg
+                                   [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-astra
+                                   [&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:transition-transform
+                                   [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full 
+                                   [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-2
+                                   [&::-moz-range-thumb]:border-astra [&::-moz-range-thumb]:shadow-lg"
+                      />
+                      {/* Slider track indicators */}
+                      <div className="absolute top-4 left-0 right-0 flex justify-between px-1">
+                        {[0, 25, 50, 75, 90].map((value) => (
+                          <div key={value} className="flex flex-col items-center">
+                            <div className="w-0.5 h-2 bg-gray-400 dark:bg-gray-500"></div>
+                            <span className="text-xs text-gray-400 dark:text-gray-500 mt-1">{value}%</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400 w-20 text-center">
+                      {t('preview.transparency.transparent')}
+                    </span>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                      {t('preview.transparency.description')}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

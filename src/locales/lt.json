@@ -22,6 +22,19 @@
     "current": "Aktyvus",
     "completed": "baigta"
   },
+  "preview": {
+    "title": "3D peržiūra",
+    "volume": "Tūris",
+    "material": "Medžiaga",
+    "transparency": {
+      "title": "Skaidrumas",
+      "label": "Talpos skaidrumas",
+      "opaque": "Nepermatomas",
+      "transparent": "Skaidrus",
+      "percentage": "% skaidrumas",
+      "description": "Reguliuokite skaidrumą, kad geriau matytumėte talpos vidinę struktūrą ir detales"
+    }
+  },
   "navigation": {
     "home": "Pradžia",
     "configurator": "Konfigurator",
@@ -242,47 +255,113 @@
     "title": "Pasirinkite papildomus priedus",
     "subtitle": "Rekomenduojami priedai pagal talpyklos paskirtį",
     "recommended": "Rekomenduojama",
+    "optional": "Neprivaloma",
+    "estimatedCost": "Orientacinė kaina",
+    "technical": "Techninė informacija",
+    "benefits": "Privalumai",
+    "applications": "Taikymas",
     "accessories": {
-      "manhole": {
-        "title": "Įlaz",
-        "description": "Žmogaus patekimo anga"
+      "supportLegs": {
+        "title": "Atraminės kojos",
+        "description": "Konstrukcinės atramos talpyklos pakėlimui",
+        "benefits": [
+          "Pagerintas nusausinimas",
+          "Lengvas priežiūros priėjimas",
+          "Geresnis stabilumas"
+        ],
+        "applications": [
+          "Visi talpyklų tipai",
+          "Lauko instaliacijoms"
+        ],
+        "technical": "Reguliuojamo aukščio kojos su tvirtinimo varžtais"
       },
-      "drain": {
-        "title": "Nuotekų vamzdis",
-        "description": "Talpyklos ištuštinimui"
+      "thermalInsulation": {
+        "title": "Šiluminė izoliacija",
+        "description": "Izoliacijos apvalkalas temperatūrai palaikyti ir kondensacijos prevencijai",
+        "benefits": [
+          "Temperatūros kontrolė",
+          "Energijos efektyvumas",
+          "Kondensacijos prevencija"
+        ],
+        "applications": [
+          "Temperatūrai jautrus saugojimas",
+          "Lauko instaliacijoms"
+        ],
+        "technical": "Poliuretano putos arba mineralinė vata su apsauginiu dangteliu"
       },
-      "overflow": {
-        "title": "Perpildymo vamzdis",
-        "description": "Apsauga nuo perpildymo"
+      "cipSystem": {
+        "title": "CIP (Valymas vietoje) sistema",
+        "description": "Automatizuota valymo sistema su purškimo rutuliais ir antgaliais",
+        "benefits": [
+          "Automatizuotas valymas",
+          "Higienos standartai",
+          "Sumažintas prastovų laikas"
+        ],
+        "applications": [
+          "Maisto pramonė",
+          "Farmaceutikos pramonė",
+          "Pieno pramonė"
+        ],
+        "technical": "Besisukančios purškimo galvutės su kontroliuojamu srauto greičiu"
       },
-      "vent": {
-        "title": "Ventiliacijos vožtuvas",
-        "description": "Spaudimo suvienodojimui"
+      "pressureRelief": {
+        "title": "Slėgio pašalinimas / Ventiliacija",
+        "description": "Saugos vožtuvai ir ventiliacijos sistemos slėgio valdymui",
+        "benefits": [
+          "Saugos atitiktis",
+          "Slėgio kontrolė",
+          "Vakuumo prevencija"
+        ],
+        "applications": [
+          "Hermetizuotos sistemos",
+          "Cheminių medžiagų saugojimas",
+          "Saugumui kritiškos aplikacijos"
+        ],
+        "technical": "Slėgio pašalinimo vožtuvai, vakuumo pertraukėjai ir liepsnos sustabdymo įrenginiai"
       },
-      "levelGauge": {
-        "title": "Lygio matuoklis",
-        "description": "Skysčio lygio stebėjimui"
+      "levelIndicators": {
+        "title": "Skysčio lygio indikatoriai",
+        "description": "Vizualūs ir elektroniniai lygio stebėjimo sistemos",
+        "benefits": [
+          "Realaus laiko stebėjimas",
+          "Atsargų valdymas",
+          "Perpildymo prevencija"
+        ],
+        "applications": [
+          "Procesų stebėjimas",
+          "Automatizuotos sistemos",
+          "Atsargų kontrolė"
+        ],
+        "technical": "Ultragarsiniai jutikliai, stebėjimo stiklai arba plūdurio matuokliai"
       },
-      "ladder": {
-        "title": "Kopėčios",
-        "description": "Saugus priėjimas prie talpyklos"
-      },
-      "insulation": {
-        "title": "Izoliacija",
-        "description": "Šiluminė izoliacija"
-      },
-      "heating": {
-        "title": "Šildymo elementas",
-        "description": "Turinio šildymui"
-      },
-      "agitator": {
-        "title": "Maišytuvas",
-        "description": "Turinio maišymui"
-      },
-      "coating": {
-        "title": "Apsauginis dangys",
-        "description": "Papildoma apsauga"
+      "hatchesAndDrains": {
+        "title": "Angos, spaustukai, nutekėjimas",
+        "description": "Priėjimo angos, nusausinimo vožtuvai ir jungiamieji fitingai",
+        "benefits": [
+          "Lengvas priėjimas",
+          "Pilnas nusausinimas",
+          "Priežiūros patogumas"
+        ],
+        "applications": [
+          "Visos talpyklų aplikacijos",
+          "Priežiūros reikalavimai"
+        ],
+        "technical": "Angos, tri-clamp jungtys ir nuožulnūs išleidimo angos"
       }
+    },
+    "costLevels": {
+      "None": "Nėra",
+      "Low": "Žema",
+      "Low-Medium": "Žema-Vidutinė",
+      "Medium": "Vidutinė",
+      "High": "Aukšta"
+    },
+    "summary": {
+      "title": "Pasirinkti priedai",
+      "selectedCount": "priedų pasirinkta",
+      "totalCost": "Bendra orientacinė kaina",
+      "noAccessories": "Nepasirinkta jokių priedų",
+      "noAccessoriesDescription": "Galite pridėti priedų, kad padidintumėte talpos funkcionalumą"
     }
   },
   "summaryStep": {
