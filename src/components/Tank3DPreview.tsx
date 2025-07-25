@@ -376,7 +376,7 @@ const DraggableAccessory = ({ accessory, onPositionChange, onDragStateChange, ta
         const currentPos = meshRef.current.position;
 
         // Surface-locked movement system: accessories move along tank surface
-        const sensitivity = 0.01; // Reduced sensitivity for more controlled movement
+        const sensitivity = 0.001; // Reduced sensitivity for smoother movement
         
         // Get tank information from props
         const tankRadius = tankInfo.radius;
@@ -412,45 +412,41 @@ const DraggableAccessory = ({ accessory, onPositionChange, onDragStateChange, ta
           
           // Calculate angle for rotation around tank
           let angle = Math.atan2(currentPos.z, currentPos.x);
-          // Reverse deltaX for more intuitive movement (drag right = move right)
-          angle -= deltaX * sensitivity * 3; // Rotate around tank with mouse X movement
+          // Fixed: + deltaX for intuitive movement (drag right = rotate clockwise)
+          angle += deltaX * sensitivity * 2; // Rotate around tank with mouse X movement
           
           const projectedX = Math.cos(angle) * targetDistance;
           const projectedZ = Math.sin(angle) * targetDistance;
           
           newPosition = [projectedX, constrainedY, projectedZ];
         } else {
-          // For rectangular tanks: project onto rectangular surface
-          // Determine which face of the rectangle the accessory is closest to
-          const distToLeft = Math.abs(currentPos.x + tankRadius);
-          const distToRight = Math.abs(currentPos.x - tankRadius);
-          const distToFront = Math.abs(currentPos.z + tankRadius);
-          const distToBack = Math.abs(currentPos.z - tankRadius);
+          // For rectangular tanks: simplified intuitive movement
+          // Allow free movement around the rectangular perimeter
+          // Use deltaX for horizontal movement, deltaY for vertical movement
           
-          const minDist = Math.min(distToLeft, distToRight, distToFront, distToBack);
-          const offset = 0.2; // Fixed small offset from tank surface
+          // Get current distance from tank center for maintaining offset
+          const currentDistance = Math.sqrt(currentPos.x * currentPos.x + currentPos.z * currentPos.z);
+          const targetDistance = tankRadius + 0.2; // Maintain fixed offset from tank
           
-          if (minDist === distToLeft) {
-            // Left face - constrain to face, allow sliding along Z
-            // Reverse deltaX for more intuitive movement (drag right = move right)
-            const newZ = Math.max(-tankRadius + 0.1, Math.min(tankRadius - 0.1, currentPos.z - deltaX * sensitivity * 5));
-            newPosition = [-tankRadius - offset, constrainedY, newZ];
-          } else if (minDist === distToRight) {
-            // Right face - constrain to face, allow sliding along Z
-            // Reverse deltaX for more intuitive movement (drag right = move right)
-            const newZ = Math.max(-tankRadius + 0.1, Math.min(tankRadius - 0.1, currentPos.z - deltaX * sensitivity * 5));
-            newPosition = [tankRadius + offset, constrainedY, newZ];
-          } else if (minDist === distToFront) {
-            // Front face - constrain to face, allow sliding along X
-            // Reverse deltaX for more intuitive movement (drag right = move right)
-            const newX = Math.max(-tankRadius + 0.1, Math.min(tankRadius - 0.1, currentPos.x - deltaX * sensitivity * 5));
-            newPosition = [newX, constrainedY, -tankRadius - offset];
-          } else {
-            // Back face - constrain to face, allow sliding along X
-            // Reverse deltaX for more intuitive movement (drag right = move right)
-            const newX = Math.max(-tankRadius + 0.1, Math.min(tankRadius - 0.1, currentPos.x - deltaX * sensitivity * 5));
-            newPosition = [newX, constrainedY, tankRadius + offset];
+          // Calculate new position based on mouse movement
+          let newX = currentPos.x - deltaX * sensitivity * 8; // Fixed: + deltaX for intuitive left/right movement
+          let newZ = currentPos.z + deltaY * sensitivity * 8; // Fixed: - deltaY for intuitive forward/back movement
+          
+          // Ensure we maintain the offset distance from tank center
+          const newDistance = Math.sqrt(newX * newX + newZ * newZ);
+          if (newDistance > 0) {
+            const scale = targetDistance / newDistance;
+            newX *= scale;
+            newZ *= scale;
           }
+          
+          // Ensure accessory stays within reasonable bounds
+          const maxCoord = tankRadius + 0.5;
+          newX = Math.max(-maxCoord, Math.min(maxCoord, newX));
+          newZ = Math.max(-maxCoord, Math.min(maxCoord, newZ));
+          
+          newPosition = [newX, constrainedY, newZ];
+          console.log(`Rectangular tank - Free movement: deltaX=${deltaX.toFixed(2)}, deltaY=${deltaY.toFixed(2)} -> pos=[${newX.toFixed(2)}, ${constrainedY.toFixed(2)}, ${newZ.toFixed(2)}] (fixed direction)`);
         }
 
         // Apply strict bounds based on tank's actual geometry
@@ -538,7 +534,10 @@ const DraggableAccessory = ({ accessory, onPositionChange, onDragStateChange, ta
           anchorX="center"
           anchorY="middle"
         >
-          Drag to move along tank surface
+          {tankInfo.type === 'cylindrical' 
+            ? 'Drag left/right to rotate around tank'
+            : 'Drag to move freely around tank'
+          }
         </Text>
       )}
     </mesh>
@@ -817,6 +816,9 @@ const Tank3DPreview = ({ formData, transparency = 1.0 }: TankPreviewProps) => {
   const [accessories, setAccessories] = useState<AccessoryPosition[]>([]);
   const [isDraggingAccessory, setIsDraggingAccessory] = useState(false);
   const orbitControlsRef = useRef<any>(null);
+  
+  // Store accessory positions to preserve them across step changes
+  const savedPositionsRef = useRef<Record<string, [number, number, number]>>({});
 
   // Debug: log when Tank3DPreview receives new props
   useEffect(() => {
@@ -931,10 +933,16 @@ const Tank3DPreview = ({ formData, transparency = 1.0 }: TankPreviewProps) => {
 
           console.log(`Final position for ${type}: [${defaultPosition[0].toFixed(2)}, ${defaultPosition[1].toFixed(2)}, ${defaultPosition[2].toFixed(2)}]`);
 
+          // Use saved position if available, otherwise use default position
+          const savedPosition = savedPositionsRef.current[type as AccessoryType];
+          const finalPosition = savedPosition || defaultPosition;
+          
+          console.log(`Using ${savedPosition ? 'saved' : 'default'} position for ${type}: [${finalPosition[0].toFixed(2)}, ${finalPosition[1].toFixed(2)}, ${finalPosition[2].toFixed(2)}]`);
+
           newAccessories.push({
             id: `${type}-${accessoryIndex++}`,
             type: type as AccessoryType,
-            position: defaultPosition,
+            position: finalPosition,
             rotation: [0, 0, 0],
           });
         }
@@ -946,6 +954,12 @@ const Tank3DPreview = ({ formData, transparency = 1.0 }: TankPreviewProps) => {
   }, [formData]);
 
   const handleAccessoryPositionChange = (id: string, position: [number, number, number]) => {
+    // Save the position for this accessory type
+    const accessory = accessories.find(acc => acc.id === id);
+    if (accessory) {
+      savedPositionsRef.current[accessory.type] = position;
+    }
+    
     setAccessories(prev => 
       prev.map(acc => 
         acc.id === id ? { ...acc, position } : acc
