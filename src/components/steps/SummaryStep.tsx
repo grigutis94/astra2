@@ -1,5 +1,6 @@
 import { useFormContext } from 'react-hook-form';
 import type { TankFormData } from '../../types/tankTypes';
+import TechnicalDrawing from '../TechnicalDrawing';
 
 const SummaryStep = () => {
   const { watch } = useFormContext<TankFormData>();
@@ -68,6 +69,11 @@ const SummaryStep = () => {
             </p>
           </div>
         </div>
+      </div>
+      
+      {/* Technical Drawing Section */}
+      <div className="mt-8">
+        <TechnicalDrawing formData={formValues} />
       </div>
     </div>
   );

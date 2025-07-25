@@ -1,5 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+/* Import Astra Theme */
+@import './styles/theme.css';
+
 /* Tailwind CSS directives */
 /* stylelint-disable-next-line at-rule-no-unknown */
 @tailwind base;
@@ -10,13 +13,8 @@
 
 :root {
   --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --background: #ffffff; /* Updated to pure white for light theme */
-  --foreground: #1d1d1f;
-}
-
-:root.dark {
-  --background: #002349;
-  --foreground: #ffffff;
+  --background: var(--color-bg-secondary); /* Use Astra neutral light */
+  --foreground: var(--color-text-primary); /* Use Astra neutral dark */
 }
 
 @layer base {
@@ -41,14 +39,15 @@
 }
 
 @layer components {
-  .form-input {
+  /* Use the form-input class from theme.css instead */
+  .form-input-old {
     width: 100%;
     border-radius: 0.75rem;
-    border: 2px solid #475569;
-    background-color: #334155;
+    border: 2px solid var(--color-border-primary);
+    background-color: var(--color-bg-primary);
     padding: 0.75rem 1rem;
     font-size: 0.875rem;
-    color: #ffffff;
+    color: var(--color-text-primary);
   }
   
   .form-input:focus {

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 140" width="400" height="140">
+  <!-- Astra Logo Background -->
+  <rect x="5" y="5" width="390" height="130" rx="65" ry="65" fill="none" stroke="#0057B8" stroke-width="8"/>
+  
+  <!-- Logo Circle with Triangle Pattern -->
+  <circle cx="70" cy="70" r="45" fill="#0057B8"/>
+  
+  <!-- Triangle Pattern Inside Circle -->
+  <g fill="#FFFFFF">
+    <!-- Main Triangle -->
+    <path d="M70 30 L50 75 L90 75 Z"/>
+    <!-- Left Small Triangle -->
+    <path d="M45 85 L35 100 L55 100 Z"/>
+    <!-- Right Small Triangle -->
+    <path d="M85 85 L75 100 L95 100 Z"/>
+  </g>
+  
+  <!-- ASTRA Text -->
+  <g fill="#0057B8" font-family="Arial, sans-serif" font-weight="bold">
+    <!-- A -->
+    <path d="M140 45 L155 100 L170 45 L180 45 L160 110 L150 110 L130 45 Z"/>
+    <rect x="145" y="70" width="20" height="8"/>
+    
+    <!-- S -->
+    <path d="M190 60 C190 50 200 45 215 45 C225 45 235 50 235 60 L225 65 C225 58 220 55 215 55 C210 55 205 58 205 60 C205 65 210 67 220 70 C230 73 240 78 240 90 C240 100 230 105 215 105 C200 105 190 100 190 90 L200 85 C200 92 205 95 215 95 C220 95 225 92 225 90 C225 85 220 83 210 80 C200 77 190 72 190 60 Z"/>
+    
+    <!-- T -->
+    <rect x="250" y="45" width="50" height="10"/>
+    <rect x="270" y="45" width="10" height="65"/>
+    
+    <!-- R -->
+    <rect x="310" y="45" width="10" height="65"/>
+    <path d="M310 45 L340 45 C350 45 355 50 355 60 C355 70 350 75 340 75 L310 75 Z"/>
+    <path d="M330 75 L355 110 L340 110 L320 80 L325 75 Z"/>
+    
+    <!-- A -->
+    <path d="M370 45 L385 100 L400 45 L410 45 L385 110 L375 110 L350 45 Z"/>
+    <rect x="375" y="70" width="20" height="8"/>
+  </g>
+</svg>

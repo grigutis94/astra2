@@ -4,7 +4,7 @@ import type { TankFormData, FormStep } from '../types/tankTypes';
 import FormStepper from './FormStepper';
 import Button from './ui/Button';
 import Tank3DPreview from './Tank3DPreview';
-import ThemeToggle from './ThemeToggle';
+//import ThemeToggle from './ThemeToggle';
 import { useTranslation } from '../contexts/LanguageContext';
 
 // Import new step components
@@ -117,21 +117,7 @@ const TankConfigForm = () => {
 
   return (
     <FormProvider {...methods}>
-      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white">
-        {/* Modern Header */}
-        <div className="border-b border-gray-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto px-6 py-8">
-            <div className="flex justify-between items-center">
-              <div>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-astra to-astra-soft bg-clip-text text-transparent mb-3">
-                  Tank Configurator
-                </h1>
-  
-              </div>
-              <ThemeToggle />
-            </div>
-          </div>
-        </div>
+      <div className="min-h-screen bg-neutral-light text-neutral-dark">
 
         {/* Main Content */}
         <div className="max-w-7xl mx-auto px-6 py-8">
@@ -150,13 +136,13 @@ const TankConfigForm = () => {
             <div className="space-y-8">
               <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-8">
                 {/* Current Step Component */}
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+                <div className="card">
                   <div className="p-8">
                     {stepComponents[currentStep]}
                   </div>
                   
                   {/* Navigation Buttons */}
-                  <div className="px-8 py-6 bg-gray-50 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600">
+                  <div className="px-8 py-6 bg-neutral-light border-t border-border-primary">
                     <div className="flex justify-between items-center">
                       <Button
                         type="button"
@@ -201,37 +187,37 @@ const TankConfigForm = () => {
               
               {/* Quick Stats */}
               <div className="mt-6 grid grid-cols-2 gap-4">
-                <div className="bg-white dark:bg-gray-800 rounded-xl p-4 text-center border border-gray-200 dark:border-gray-600">
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">{t('preview.volume')}</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <div className="card p-4 text-center">
+                  <p className="text-sm text-muted mb-1">{t('preview.volume')}</p>
+                  <p className="text-2xl font-bold text-neutral-dark">
                     {formValues.volume ? formValues.volume.toFixed(2) : '0.00'} m³
                   </p>
                 </div>
-                <div className="bg-white dark:bg-gray-800 rounded-xl p-4 text-center border border-gray-200 dark:border-gray-600">
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">{t('preview.material')}</p>
-                  <p className="text-lg font-bold text-gray-900 dark:text-white">
+                <div className="card p-4 text-center">
+                  <p className="text-sm text-muted mb-1">{t('preview.material')}</p>
+                  <p className="text-lg font-bold text-neutral-dark">
                     {formValues.material ? `AISI ${formValues.material}` : t('common.select')}
                   </p>
                 </div>
               </div>
               
               {/* Transparency Control */}
-              <div className="mt-4 bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-600 shadow-sm">
+              <div className="mt-4 card p-5">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"></div>
-                    <p className="text-sm font-semibold text-gray-900 dark:text-white">{t('preview.transparency.label')}</p>
+                    <div className="w-3 h-3 bg-primary-blue rounded-full"></div>
+                    <p className="text-sm font-semibold text-neutral-dark">{t('preview.transparency.label')}</p>
                   </div>
-                  <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
-                    <div className="w-2 h-2 bg-astra rounded-full animate-pulse"></div>
-                    <span className="text-sm font-medium text-astra">
+                  <div className="flex items-center gap-2 bg-neutral-light px-3 py-1 rounded-full">
+                    <div className="w-2 h-2 bg-primary-blue rounded-full animate-pulse"></div>
+                    <span className="text-sm font-medium text-primary-blue">
                       {Math.round((1 - tankTransparency) * 100)}{t('preview.transparency.percentage')}
                     </span>
                   </div>
                 </div>
                 <div className="space-y-3">
                   <div className="flex items-center gap-4">
-                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400 w-20 text-center">
+                    <span className="text-xs font-medium text-muted w-20 text-center">
                       {t('preview.transparency.opaque')}
                     </span>
                     <div className="flex-1 relative">
@@ -242,33 +228,32 @@ const TankConfigForm = () => {
                         step="5"
                         value={Math.round((1 - tankTransparency) * 100)}
                         onChange={(e) => setTankTransparency(1 - (parseFloat(e.target.value) / 100))}
-                        className="w-full h-3 bg-gradient-to-r from-gray-300 via-blue-200 to-blue-400 rounded-lg appearance-none cursor-pointer
-                                   dark:from-gray-600 dark:via-blue-800 dark:to-blue-600
+                        className="w-full h-3 bg-gradient-to-r from-neutral-light via-primary-blue to-accent-orange rounded-lg appearance-none cursor-pointer
                                    [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 
                                    [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white 
                                    [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-lg
-                                   [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-astra
+                                   [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-primary-blue
                                    [&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:transition-transform
                                    [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full 
                                    [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-2
-                                   [&::-moz-range-thumb]:border-astra [&::-moz-range-thumb]:shadow-lg"
+                                   [&::-moz-range-thumb]:border-primary-blue [&::-moz-range-thumb]:shadow-lg"
                       />
                       {/* Slider track indicators */}
                       <div className="absolute top-4 left-0 right-0 flex justify-between px-1">
                         {[0, 25, 50, 75, 90].map((value) => (
                           <div key={value} className="flex flex-col items-center">
-                            <div className="w-0.5 h-2 bg-gray-400 dark:bg-gray-500"></div>
-                            <span className="text-xs text-gray-400 dark:text-gray-500 mt-1">{value}%</span>
+                            <div className="w-0.5 h-2 bg-border-secondary"></div>
+                            <span className="text-xs text-muted mt-1">{value}%</span>
                           </div>
                         ))}
                       </div>
                     </div>
-                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400 w-20 text-center">
+                    <span className="text-xs font-medium text-muted w-20 text-center">
                       {t('preview.transparency.transparent')}
                     </span>
                   </div>
                   <div className="text-center">
-                    <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                    <p className="text-xs text-muted leading-relaxed">
                       {t('preview.transparency.description')}
                     </p>
                   </div>

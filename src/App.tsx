@@ -1,24 +1,28 @@
 import './App.css'
 import TankConfigForm from './components/TankConfigForm'
 import LanguageSelector from './components/LanguageSelector'
+import Logo from './components/Logo'
 import { useTranslation } from './contexts/LanguageContext'
 
 function App() {
   const { t } = useTranslation();
 
   return (
-    <div className="min-h-screen bg-astra-light dark:bg-astra-dark transition-colors duration-200">
+    <div className="min-h-screen bg-neutral-light">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+      <header className="bg-white shadow-md border-b border-border-primary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div>
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                {t('header.title')}
-              </h1>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {t('header.subtitle')}
-              </p>
+            <div className="flex items-center gap-4">
+              <Logo size="sm" showText={false} />
+              <div>
+                <h1 className="text-xl font-bold text-neutral-dark">
+                  {t('header.title')}
+                </h1>
+                <p className="text-sm text-muted">
+                  {t('header.subtitle')}
+                </p>
+              </div>
             </div>
             <LanguageSelector />
           </div>
@@ -29,11 +33,12 @@ function App() {
       <main className="py-8">
         <TankConfigForm />
       </main>
+      
       {/* Footer */}
-      <footer className="bg-white dark:bg-gray-800 border-t border-gray-200">
+      <footer className="bg-white border-t border-border-primary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="py-4 text-center">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-muted">
               {t('© 2025 Astra Tank Configurator. All rights reserved.')}
             </p>
           </div>

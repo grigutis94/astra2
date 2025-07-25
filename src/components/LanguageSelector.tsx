@@ -12,15 +12,15 @@ const LanguageSelector = () => {
 
   return (
     <div className="relative inline-block">
-      <div className="flex items-center gap-1 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600 p-1">
+      <div className="flex items-center gap-1 bg-white rounded-lg border border-border-primary p-1">
         {languages.map((lang) => (
           <button
             key={lang.code}
             onClick={() => setLanguage(lang.code)}
             className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
               language === lang.code
-                ? 'bg-astra text-white shadow-sm'
-                : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                ? 'bg-primary-blue text-white shadow-sm'
+                : 'text-neutral-dark hover:bg-neutral-light'
             }`}
             title={lang.name}
           >

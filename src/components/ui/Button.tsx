@@ -1,10 +1,14 @@
+import React from 'react';
+
 type ButtonProps = {
   label: string;
   onClick?: () => void;
   type?: 'button' | 'submit' | 'reset';
-  variant?: 'primary' | 'secondary' | 'outline';
+  variant?: 'primary' | 'secondary' | 'accent' | 'success' | 'outline';
+  size?: 'sm' | 'md' | 'lg';
   disabled?: boolean;
   className?: string;
+  children?: React.ReactNode;
 };
 
 const Button = ({
@@ -12,15 +16,25 @@ const Button = ({
   onClick,
   type = 'button',
   variant = 'primary',
+  size = 'md',
   disabled = false,
   className = '',
+  children,
 }: ButtonProps) => {
-  const baseClasses = 'inline-flex items-center justify-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-astra-dark disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseClasses = 'inline-flex items-center justify-center font-medium transition-all duration-200 rounded-lg focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed';
+  
+  const sizeClasses = {
+    sm: 'btn-sm',
+    md: '',
+    lg: 'btn-lg',
+  };
   
   const variantClasses = {
-    primary: 'bg-astra-medium hover:bg-astra-deep text-white focus:ring-astra-soft shadow-sm',
-    secondary: 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-gray-900 dark:hover:text-white focus:ring-gray-500',
-    outline: 'bg-transparent text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white focus:ring-gray-500',
+    primary: 'btn btn-primary',
+    secondary: 'btn btn-secondary', 
+    accent: 'btn btn-accent',
+    success: 'btn btn-success',
+    outline: 'bg-white text-neutral-dark border border-border-primary hover:bg-neutral-light focus:ring-primary-blue',
   };
   
   return (
@@ -28,9 +42,9 @@ const Button = ({
       type={type}
       onClick={disabled ? undefined : onClick}
       disabled={disabled}
-      className={`${baseClasses} ${variantClasses[variant]} ${className}`.trim()}
+      className={`${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${className}`.trim()}
     >
-      {label}
+      {children || label}
     </button>
   );
 };

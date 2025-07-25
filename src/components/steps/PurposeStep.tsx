@@ -114,12 +114,12 @@ const PurposeStep = () => {
             
             <div className={`relative p-8 rounded-2xl border-2 transition-all duration-300 h-full flex flex-col justify-between ${
               purpose === key
-                ? 'border-astra bg-astra/5 dark:bg-astra/10'
-                : 'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 group-hover:border-astra/50'
+                ? 'border-primary-blue bg-primary-blue/5'
+                : 'border-border-primary bg-white group-hover:border-primary-blue/50'
             }`}>
               {/* Selection indicator */}
               {purpose === key && (
-                <div className="absolute top-4 right-4 w-6 h-6 bg-astra rounded-full flex items-center justify-center">
+                <div className="absolute top-4 right-4 w-6 h-6 bg-primary-blue rounded-full flex items-center justify-center">
                   <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
@@ -129,16 +129,16 @@ const PurposeStep = () => {
               {/* Emoji and Title */}
               <div className="text-center mb-6">
                 <div className="text-5xl mb-4">{requirement.emoji}</div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                <h3 className="text-xl font-bold text-neutral-dark mb-2">
                   {t(`purposeStep.${key}.title`)}
                 </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                <p className="text-sm text-muted leading-relaxed">
                   {t(`purposeStep.${key}.description`)}
                 </p>
               </div>
               
               {/* Technical specs preview */}
-              <div className="space-y-3 pt-4 border-t border-gray-200 dark:border-gray-600">
+              <div className="space-y-3 pt-4 border-t border-border-primary">
                 {/* Removed Min. Wall Thickness and Recommended Material */}
               </div>
             </div>
@@ -149,20 +149,20 @@ const PurposeStep = () => {
       {/* Error message */}
       {errors.purpose && (
         <div className="text-center">
-          <p className="text-red-500 dark:text-red-400 text-sm">{errors.purpose.message}</p>
+          <p className="text-error text-sm">{errors.purpose.message}</p>
         </div>
       )}
 
       {/* Dynamic requirements and notes */}
       {purpose && (
-        <div className={`mt-12 p-8 bg-white dark:bg-gray-800 rounded-2xl border border-astra/20`}>
+        <div className={`mt-12 p-8 card border border-primary-blue/20`}>
           <div className="flex items-center gap-3 mb-6">
             <div className="text-2xl">{purposeRequirements[purpose].emoji}</div>
             <div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+              <h3 className="text-xl font-bold text-neutral-dark">
                 {t(`purposeStep.${purpose}.title`)} {t('purposeStep.requirements')}
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-muted">
                 {t('purposeStep.autoConfig')}
               </p>
             </div>
@@ -170,20 +170,20 @@ const PurposeStep = () => {
 
           {/* Detailed recommendations */}
           <div className="space-y-4">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-muted">
               - {t(`purposeStep.${purpose}.notes.0`)}
             </p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-muted">
               - {t(`purposeStep.${purpose}.notes.1`)}
             </p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-muted">
               - {t(`purposeStep.${purpose}.notes.2`)}
             </p>
-            <p className="text-sm font-semibold text-gray-900 dark:text-white">
+            <p className="text-sm font-semibold text-neutral-dark">
               {t(`purposeStep.${purpose}.helperText`)}
             </p>
             {/* Recommended Material */}
-            <p className="text-sm font-semibold text-gray-900 dark:text-white">
+            <p className="text-sm font-semibold text-neutral-dark">
               {t(`purposeStep.${purpose}.recommendedMaterial`)}: {purposeRequirements[purpose].defaultMaterial}
             </p>
           </div>
