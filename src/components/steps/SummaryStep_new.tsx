@@ -80,7 +80,32 @@ const SummaryStep = () => {
         </div>
       </div>
       
-      <TechnicalDrawing />
+      <TechnicalDrawing formData={{
+        purpose: 'water',
+        tankType: 'cylindrical',
+        height: undefined,
+        diameter: undefined,
+        width: undefined,
+        wallThickness: undefined,
+        volume: 0,
+        material: '304',
+        innerSurface: 'polished',
+        outerSurface: 'painted',
+        accessories: {
+          supportLegs: false,
+          thermalInsulation: false,
+          cipSystem: false,
+          pressureRelief: false,
+          levelIndicators: false,
+          hatchesAndDrains: false
+        },
+        accessorySize: undefined,
+        orientation: 'vertical',
+        legs: 0,
+        topType: 'flat',
+        bottomType: 'flat',
+        flangeCount: 0
+      }} />
     </div>
   );
 };
