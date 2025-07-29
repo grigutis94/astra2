@@ -19,7 +19,7 @@ const LanguageSelector = () => {
             onClick={() => setLanguage(lang.code)}
             className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
               language === lang.code
-                ? 'bg-primary-blue text-white shadow-sm'
+                ? 'bg-primary-blue/20 text-primary-blue shadow-sm'
                 : 'text-neutral-dark hover:bg-neutral-light'
             }`}
             title={lang.name}

@@ -14,14 +14,11 @@ function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-4">
-              <Logo size="sm" showText={false} />
               <div>
+                <Logo size="sm" showText={false} />
                 <h1 className="text-xl font-bold text-neutral-dark">
                   {t('header.title')}
                 </h1>
-                <p className="text-sm text-muted">
-                  {t('header.subtitle')}
-                </p>
               </div>
             </div>
             <LanguageSelector />

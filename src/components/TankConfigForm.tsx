@@ -12,6 +12,7 @@ import PurposeStep from './steps/PurposeStep';
 import DimensionsStep from './steps/DimensionsStep';
 import MaterialStep from './steps/MaterialStep';
 import AccessoriesStep from './steps/AccessoriesStep';
+import PriceCalculationStep from './steps/PriceCalculationStep';
 import SummaryStep from './steps/SummaryStep';
 
 const TankConfigForm = () => {
@@ -72,6 +73,7 @@ const TankConfigForm = () => {
     { id: 'dimensions', label: tString('stepper.step2') },
     { id: 'material', label: tString('stepper.step3') },
     { id: 'accessories', label: tString('stepper.step4') },
+    { id: 'pricing', label: 'Kainos skaičiavimas' },
     { id: 'summary', label: tString('stepper.step5') },
   ];
   
@@ -80,6 +82,7 @@ const TankConfigForm = () => {
     <DimensionsStep key="dimensions" />,
     <MaterialStep key="material" />,
     <AccessoriesStep key="accessories" />,
+    <PriceCalculationStep key="pricing" />,
     <SummaryStep key="summary" />,
   ];
 
@@ -105,7 +108,7 @@ const TankConfigForm = () => {
   
   const onSubmit = async (data: TankFormData) => {
     console.log('Form submitted:', data);
-    alert('Tank configuration completed successfully!');
+   // alert('Tank configuration completed successfully!');
   };
 
   const formValues = methods.watch();

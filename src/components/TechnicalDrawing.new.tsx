@@ -258,7 +258,7 @@ const TechnicalDrawing: React.FC<TechnicalDrawingProps> = ({
   };
 
   return (
-    <div className={`w-full ${className}`}>
+    <div className={`card w-full ${className}`}>
       {showTitle && (
         <div className="mb-6 flex justify-between items-center">
           <div>
@@ -326,7 +326,6 @@ const TechnicalDrawing: React.FC<TechnicalDrawingProps> = ({
           viewBox={`0 0 ${svgWidth} ${svgHeight}`}
           preserveAspectRatio="xMidYMid meet"
           style={{ maxWidth: '100%' }}
-          data-technical-drawing={currentView}
         >
           {/* Grid lines */}
           <defs>

@@ -259,7 +259,7 @@ const DimensionsStep = () => {
             <button
               type="button"
               onClick={() => setShowVolumeCalculation(!showVolumeCalculation)}
-              className="text-sm text-primary-blue hover:text-primary-blue-hover transition-colors duration-200 flex items-center gap-2"
+              className="text-sm text-primary-blue flex items-center gap-2"
             >
               {showVolumeCalculation ? t('dimensionsStep.hideCalculation') : t('dimensionsStep.showCalculation')}
               <svg className={`w-4 h-4 transition-transform duration-200 ${showVolumeCalculation ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -267,24 +267,24 @@ const AccessoriesStep = () => {
 
       {/* Selection Summary */}
       {accessories && Object.values(accessories).some(Boolean) && (
-        <div className="bg-gradient-to-r from-astra/5 to-astra-soft/5 dark:from-astra/10 dark:to-astra-soft/10 rounded-2xl p-8 border border-astra/20">
+        <div className="bg-gradient-to-r from-astra/5 to-astra-soft/5 rounded-2xl p-8 border border-astra/20">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+              <h3 className="text-xl font-bold text-gray-900">
                 {t('accessoriesStep.summary.title')}
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-gray-900 dark:text-gray-900">
                 {Object.values(accessories).filter(Boolean).length} {t('accessoriesStep.summary.selectedCount')}
               </p>
             </div>
             <div className="text-right">
-              <p className="text-sm text-gray-600 dark:text-gray-400">{t('accessoriesStep.summary.totalCost')}</p>
+              <p className="text-sm text-gray-900">{t('accessoriesStep.summary.totalCost')}</p>
               <p className={`text-lg font-bold ${
                 getEstimatedCostForSelection() === t('accessoriesStep.costLevels.Low')
-                  ? 'text-green-600 dark:text-green-400'
+                  ? 'text-green-600'
                   : getEstimatedCostForSelection() === t('accessoriesStep.costLevels.Medium')
-                  ? 'text-yellow-600 dark:text-yellow-400'
-                  : 'text-red-600 dark:text-red-400'
+                  ? 'text-yellow-600'
+                  : 'text-red-600'
               }`}>
                 {getEstimatedCostForSelection()}
               </p>
@@ -295,13 +295,13 @@ const AccessoriesStep = () => {
             {Object.entries(accessories).filter(([_, selected]) => selected).map(([key, _]) => {
               const option = getAccessoryInfo(key);
               return (
-                <div key={key} className="flex items-center gap-3 p-3 bg-white/50 dark:bg-gray-800/50 rounded-lg">
+                <div key={key} className="flex items-center gap-3 p-3 bg-white/50 dark:bg-gray-300 rounded-lg">
                   <div className="text-2xl">{option.icon}</div>
                   <div>
-                    <p className="font-semibold text-gray-900 dark:text-white text-sm">
+                    <p className="font-semibold text-gray-900 dark:text-gray-900 text-sm">
                       {option.title}
                     </p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                    <p className="text-xs text-gray-600 dark:text-gray-900">
                       {t(`accessoriesStep.costLevels.${option.estimatedCost}`)} {tString('accessoriesStep.estimatedCost').toLowerCase()}
                     </p>
                   </div>
