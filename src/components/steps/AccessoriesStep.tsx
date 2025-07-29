@@ -38,6 +38,11 @@ const AccessoriesStep = () => {
       pressureRelief: '💨',
       levelIndicators: '📏',
       hatchesAndDrains: '🚪',
+      // New accessories
+      flanges: '🔗',
+      agitators: '🌪️',
+      ladders: '🪜',
+      sensors: '📡',
     };
 
     const costs: { [key: string]: string } = {
@@ -47,6 +52,11 @@ const AccessoriesStep = () => {
       pressureRelief: 'Medium',
       levelIndicators: 'Medium',
       hatchesAndDrains: 'Low-Medium',
+      // New accessories
+      flanges: 'Low',
+      agitators: 'High',
+      ladders: 'Medium',
+      sensors: 'Medium',
     };
 
     const recommended: { [key: string]: string[] } = {
@@ -56,24 +66,110 @@ const AccessoriesStep = () => {
       pressureRelief: ['chemical'],
       levelIndicators: ['water', 'food', 'chemical'],
       hatchesAndDrains: ['water', 'food', 'chemical'],
+      // New accessories
+      flanges: ['water', 'food', 'chemical'],
+      agitators: ['chemical', 'food'],
+      ladders: ['water', 'food', 'chemical'],
+      sensors: ['chemical', 'food'],
     };
 
-    const benefits = t(`accessoriesStep.accessories.${accessoryKey}.benefits`);
-    const applications = t(`accessoriesStep.accessories.${accessoryKey}.applications`);
+    // Create fallback descriptions for new accessories
+    const descriptions: { [key: string]: string } = {
+      supportLegs: t(`accessoriesStep.accessories.${accessoryKey}.description`) as string,
+      thermalInsulation: t(`accessoriesStep.accessories.${accessoryKey}.description`) as string,
+      cipSystem: t(`accessoriesStep.accessories.${accessoryKey}.description`) as string,
+      pressureRelief: t(`accessoriesStep.accessories.${accessoryKey}.description`) as string,
+      levelIndicators: t(`accessoriesStep.accessories.${accessoryKey}.description`) as string,
+      hatchesAndDrains: t(`accessoriesStep.accessories.${accessoryKey}.description`) as string,
+      // New accessories with fallback descriptions
+      flanges: 'Connection flanges for pipes and equipment attachment',
+      agitators: 'Mixing systems with motor and impeller for liquid agitation',
+      ladders: 'Access ladders with platforms for tank maintenance',
+      sensors: 'Temperature, pressure and level monitoring sensors',
+    };
+
+    const titles: { [key: string]: string } = {
+      supportLegs: t(`accessoriesStep.accessories.${accessoryKey}.title`) as string,
+      thermalInsulation: t(`accessoriesStep.accessories.${accessoryKey}.title`) as string,
+      cipSystem: t(`accessoriesStep.accessories.${accessoryKey}.title`) as string,
+      pressureRelief: t(`accessoriesStep.accessories.${accessoryKey}.title`) as string,
+      levelIndicators: t(`accessoriesStep.accessories.${accessoryKey}.title`) as string,
+      hatchesAndDrains: t(`accessoriesStep.accessories.${accessoryKey}.title`) as string,
+      // New accessories with fallback titles
+      flanges: 'Connection Flanges',
+      agitators: 'Mixing Agitators',
+      ladders: 'Access Ladders',
+      sensors: 'Monitoring Sensors',
+    };
+
+    const benefits = accessoryKey in ['supportLegs', 'thermalInsulation', 'cipSystem', 'pressureRelief', 'levelIndicators', 'hatchesAndDrains'] 
+      ? t(`accessoriesStep.accessories.${accessoryKey}.benefits`)
+      : getBenefitsForNewAccessory(accessoryKey);
+    
+    const applications = accessoryKey in ['supportLegs', 'thermalInsulation', 'cipSystem', 'pressureRelief', 'levelIndicators', 'hatchesAndDrains']
+      ? t(`accessoriesStep.accessories.${accessoryKey}.applications`)
+      : getApplicationsForNewAccessory(accessoryKey);
+
+    const technical = accessoryKey in ['supportLegs', 'thermalInsulation', 'cipSystem', 'pressureRelief', 'levelIndicators', 'hatchesAndDrains']
+      ? t(`accessoriesStep.accessories.${accessoryKey}.technical`) as string
+      : getTechnicalForNewAccessory(accessoryKey);
 
     return {
-      title: t(`accessoriesStep.accessories.${accessoryKey}.title`) as string,
-      description: t(`accessoriesStep.accessories.${accessoryKey}.description`) as string,
+      title: titles[accessoryKey] || accessoryKey,
+      description: descriptions[accessoryKey] || 'Advanced tank accessory',
       icon: icons[accessoryKey] || '📦',
       benefits: Array.isArray(benefits) ? benefits : [benefits as string],
       applications: Array.isArray(applications) ? applications : [applications as string],
       estimatedCost: costs[accessoryKey] || 'Medium',
       recommended: recommended[accessoryKey] || [],
-      technical: t(`accessoriesStep.accessories.${accessoryKey}.technical`) as string
+      technical: technical
     };
   };
 
-  const accessoryKeys = ['supportLegs', 'thermalInsulation', 'cipSystem', 'pressureRelief', 'levelIndicators', 'hatchesAndDrains'];
+  // Helper functions for new accessories
+  const getBenefitsForNewAccessory = (accessoryKey: string): string[] => {
+    const benefitsMap: { [key: string]: string[] } = {
+      flanges: ['Easy connection to pipes', 'Standard industrial fittings', 'Leak-proof sealing'],
+      agitators: ['Uniform mixing', 'Prevents sedimentation', 'Improves process efficiency'],
+      ladders: ['Safe tank access', 'Maintenance accessibility', 'OSHA compliance'],
+      sensors: ['Real-time monitoring', 'Process control', 'Safety alerts'],
+    };
+    return benefitsMap[accessoryKey] || ['Enhanced functionality'];
+  };
+
+  const getApplicationsForNewAccessory = (accessoryKey: string): string[] => {
+    const applicationsMap: { [key: string]: string[] } = {
+      flanges: ['Pipe connections', 'Equipment mounting', 'Maintenance access'],
+      agitators: ['Chemical mixing', 'Food processing', 'Pharmaceutical production'],
+      ladders: ['Tank inspection', 'Cleaning access', 'Equipment maintenance'],
+      sensors: ['Process monitoring', 'Quality control', 'Safety systems'],
+    };
+    return applicationsMap[accessoryKey] || ['General purpose'];
+  };
+
+  const getTechnicalForNewAccessory = (accessoryKey: string): string => {
+    const technicalMap: { [key: string]: string } = {
+      flanges: 'DN25-DN300, ANSI/DIN standards, various pressure ratings',
+      agitators: 'Variable speed drives, multiple impeller types, stainless steel construction',
+      ladders: 'Anti-slip surfaces, safety rails, platform options',
+      sensors: 'Intrinsically safe designs, 4-20mA output, digital communication',
+    };
+    return technicalMap[accessoryKey] || 'Professional grade equipment';
+  };
+
+  // Updated accessory keys to include all new accessories
+  const accessoryKeys = [
+    'supportLegs', 
+    'thermalInsulation', 
+    'cipSystem', 
+    'pressureRelief', 
+    'levelIndicators', 
+    'hatchesAndDrains',
+    'flanges',
+    'agitators', 
+    'ladders', 
+    'sensors'
+  ];
 
   const getRecommendationLevel = (accessoryKey: string) => {
     const accessoryInfo = getAccessoryInfo(accessoryKey);

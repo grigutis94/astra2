@@ -107,6 +107,7 @@ const PriceCalculation: React.FC<PriceCalculationProps> = ({ formData }) => {
       pressureRelief: 450, // EUR per valve
       levelIndicators: 320, // EUR per indicator
       hatchesAndDrains: 180, // EUR per unit
+      
     };
     
     if (formData.accessories) {

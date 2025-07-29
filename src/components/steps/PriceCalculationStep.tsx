@@ -1,6 +1,8 @@
 import { useFormContext } from 'react-hook-form';
 import type { TankFormData } from '../../types/tankTypes';
 import PriceCalculation from '../PriceCalculation';
+import TechnicalDrawing from '../TechnicalDrawing';
+import Tank3DPreview from '../Tank3DPreview';
 
 const PriceCalculationStep = () => {
   const { watch } = useFormContext<TankFormData>();
@@ -16,6 +18,12 @@ const PriceCalculationStep = () => {
       
       {/* Price Calculation Component */}
       <PriceCalculation formData={formValues} />
+      
+      {/* Hidden components for PDF export */}
+      <div style={{ position: 'absolute', left: '-9999px', top: '-9999px', width: '1200px', height: '800px' }}>
+        <TechnicalDrawing formData={formValues} showTitle={false} />
+        <Tank3DPreview formData={formValues} />
+      </div>
     </div>
   );
 };

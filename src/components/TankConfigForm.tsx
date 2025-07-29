@@ -3,8 +3,8 @@ import { useForm, FormProvider } from 'react-hook-form';
 import type { TankFormData, FormStep } from '../types/tankTypes';
 import FormStepper from './FormStepper';
 import Button from './ui/Button';
-import Tank3DPreview from './Tank3DPreview';
-//import ThemeToggle from './ThemeToggle';
+// import Enhanced3DTankPreview from './Enhanced3DTankPreview'; // Laikinai išjungiu
+import Tank3DPreview from './Tank3DPreview'; // Laikinai naudoju senąjį komponentą
 import { useTranslation } from '../contexts/LanguageContext';
 
 // Import new step components
@@ -38,7 +38,7 @@ const TankConfigForm = () => {
       innerSurface: 'standard',
       outerSurface: 'painted',
       
-      // Step 4: Accessories - All unselected by default
+      // Step 4: Accessories - All unselected by default (EXPANDED)
       accessories: {
         supportLegs: false,
         thermalInsulation: false,
@@ -46,9 +46,14 @@ const TankConfigForm = () => {
         pressureRelief: false,
         levelIndicators: false,
         hatchesAndDrains: false,
+        // New accessories - default to false
+        flanges: false,
+        agitators: false,
+        ladders: false,
+        sensors: false,
       },
       
-      // Accessory sizes - default to normal
+      // Accessory sizes - default to normal (EXPANDED)
       accessorySize: {
         supportLegs: 'normal',
         thermalInsulation: 'normal',
@@ -56,6 +61,11 @@ const TankConfigForm = () => {
         pressureRelief: 'normal',
         levelIndicators: 'normal',
         hatchesAndDrains: 'normal',
+        // New accessory sizes
+        flanges: 'normal',
+        agitators: 'normal',
+        ladders: 'normal',
+        sensors: 'normal',
       },
       
       // Legacy fields for 3D preview compatibility
@@ -134,7 +144,7 @@ const TankConfigForm = () => {
           </div>
 
           {/* Form Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className={`grid gap-8 ${currentStep === 4 ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'}`}>
             {/* Form Section */}
             <div className="space-y-8">
               <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-8">
@@ -184,85 +194,87 @@ const TankConfigForm = () => {
               </form>
             </div>
 
-            {/* 3D Preview Section */}
-            <div className="lg:sticky lg:top-8 h-fit">
-              <Tank3DPreview formData={formValues} transparency={tankTransparency} />
-              
-              {/* Quick Stats */}
-              <div className="mt-6 grid grid-cols-2 gap-4">
-                <div className="card p-4 text-center">
-                  <p className="text-sm text-muted mb-1">{t('preview.volume')}</p>
-                  <p className="text-2xl font-bold text-neutral-dark">
-                    {formValues.volume ? formValues.volume.toFixed(2) : '0.00'} m³
-                  </p>
-                </div>
-                <div className="card p-4 text-center">
-                  <p className="text-sm text-muted mb-1">{t('preview.material')}</p>
-                  <p className="text-lg font-bold text-neutral-dark">
-                    {formValues.material ? `AISI ${formValues.material}` : t('common.select')}
-                  </p>
-                </div>
-              </div>
-              
-              {/* Transparency Control */}
-              <div className="mt-4 card p-5">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-primary-blue rounded-full"></div>
-                    <p className="text-sm font-semibold text-neutral-dark">{t('preview.transparency.label')}</p>
+            {/* 3D Preview Section - Hide during price calculation step */}
+            {currentStep !== 4 && (
+              <div className="lg:sticky lg:top-8 h-fit">
+                <Tank3DPreview formData={formValues} transparency={tankTransparency} />
+                
+                {/* Quick Stats */}
+                <div className="mt-6 grid grid-cols-2 gap-4">
+                  <div className="card p-4 text-center">
+                    <p className="text-sm text-muted mb-1">{t('preview.volume')}</p>
+                    <p className="text-2xl font-bold text-neutral-dark">
+                      {formValues.volume ? formValues.volume.toFixed(2) : '0.00'} m³
+                    </p>
                   </div>
-                  <div className="flex items-center gap-2 bg-neutral-light px-3 py-1 rounded-full">
-                    <div className="w-2 h-2 bg-primary-blue rounded-full animate-pulse"></div>
-                    <span className="text-sm font-medium text-primary-blue">
-                      {Math.round((1 - tankTransparency) * 100)}{t('preview.transparency.percentage')}
-                    </span>
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-4">
-                    <span className="text-xs font-medium text-muted w-20 text-center">
-                      {t('preview.transparency.opaque')}
-                    </span>
-                    <div className="flex-1 relative">
-                      <input
-                        type="range"
-                        min="0"
-                        max="90"
-                        step="5"
-                        value={Math.round((1 - tankTransparency) * 100)}
-                        onChange={(e) => setTankTransparency(1 - (parseFloat(e.target.value) / 100))}
-                        className="w-full h-3 bg-gradient-to-r from-neutral-light via-primary-blue to-accent-orange rounded-lg appearance-none cursor-pointer
-                                   [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 
-                                   [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white 
-                                   [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-lg
-                                   [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-primary-blue
-                                   [&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:transition-transform
-                                   [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full 
-                                   [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-2
-                                   [&::-moz-range-thumb]:border-primary-blue [&::-moz-range-thumb]:shadow-lg"
-                      />
-                      {/* Slider track indicators */}
-                      <div className="absolute top-4 left-0 right-0 flex justify-between px-1">
-                        {[0, 25, 50, 75, 90].map((value) => (
-                          <div key={value} className="flex flex-col items-center">
-                            <div className="w-0.5 h-2 bg-border-secondary"></div>
-                            <span className="text-xs text-muted mt-1">{value}%</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    <span className="text-xs font-medium text-muted w-20 text-center">
-                      {t('preview.transparency.transparent')}
-                    </span>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xs text-muted leading-relaxed">
-                      {t('preview.transparency.description')}
+                  <div className="card p-4 text-center">
+                    <p className="text-sm text-muted mb-1">{t('preview.material')}</p>
+                    <p className="text-lg font-bold text-neutral-dark">
+                      {formValues.material ? `AISI ${formValues.material}` : t('common.select')}
                     </p>
                   </div>
                 </div>
+                
+                {/* Transparency Control */}
+                <div className="mt-4 card p-5">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-primary-blue rounded-full"></div>
+                      <p className="text-sm font-semibold text-neutral-dark">{t('preview.transparency.label')}</p>
+                    </div>
+                    <div className="flex items-center gap-2 bg-neutral-light px-3 py-1 rounded-full">
+                      <div className="w-2 h-2 bg-primary-blue rounded-full animate-pulse"></div>
+                      <span className="text-sm font-medium text-primary-blue">
+                        {Math.round((1 - tankTransparency) * 100)}{t('preview.transparency.percentage')}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-4">
+                      <span className="text-xs font-medium text-muted w-20 text-center">
+                        {t('preview.transparency.opaque')}
+                      </span>
+                      <div className="flex-1 relative">
+                        <input
+                          type="range"
+                          min="0"
+                          max="90"
+                          step="5"
+                          value={Math.round((1 - tankTransparency) * 100)}
+                          onChange={(e) => setTankTransparency(1 - (parseFloat(e.target.value) / 100))}
+                          className="w-full h-3 bg-gradient-to-r from-neutral-light via-primary-blue to-accent-orange rounded-lg appearance-none cursor-pointer
+                                     [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 
+                                     [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white 
+                                     [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-lg
+                                     [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-primary-blue
+                                     [&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:transition-transform
+                                     [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full 
+                                     [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:cursor-pointer [&::-moz	range-thumb]:border-2
+                                     [&::-moz	range-thumb]:border-primary-blue [&::-moz	range-thumb]:shadow-lg"
+                        />
+                        {/* Slider track indicators */}
+                        <div className="absolute top-4 left-0 right-0 flex justify-between px-1">
+                          {[0, 25, 50, 75, 90].map((value) => (
+                            <div key={value} className="flex flex-col items-center">
+                              <div className="w-0.5 h-2 bg-border-secondary"></div>
+                              <span className="text-xs text-muted mt-1">{value}%</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <span className="text-xs font-medium text-muted w-20 text-center">
+                        {t('preview.transparency.transparent')}
+                      </span>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-xs text-muted leading-relaxed">
+                        {t('preview.transparency.description')}
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
